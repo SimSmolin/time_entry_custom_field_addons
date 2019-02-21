@@ -9,38 +9,23 @@ This is Redmine plugin to add one feature. Allows you to choose visibility custo
    * If you are downloading the plugin directly from GitHub, you can do so by changing into your plugin directory and issuing a command like 
 
     ```
-    git clone https://github.com/SimSmolin/redmine_estimates.git
+    https://github.com/SimSmolin/time_entry_custom_field_addons.git
     ```
+    For uninstall simple delete directory ```time_entry_custom_field_addons``` into #{RAILS_ROOT}/plugins 
 
-2. The plugin requires a migration, run the following command in #{RAILS_ROOT} to upgrade your database (make a db backup before).
-
-   For Redmine 2.x and 3.x:
-    
-    ```
-    bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-    ```
-   If you need uninstall previous version
-   ```
-    bundle exec rake redmine:plugins:migrate NAME=redmine_estimates VERSION=0 RAILS_ENV=production
-   ```
+ ####NOTE: 
    
-   ####NOTE: 
-   
-    - the plugin has been tested on Redmine 2.1.x
-    - the plugin has been tested on Redmine 3.x 
+    - the plugin has been tested on Redmine 3.4.4 - 3.4.8
+    - the plugin has been tested on Redmine 4.0.1 
 
-3. Restart Redmine
+2. Restart Redmine
 
 You should now be able to see the plugin list in Administration -> Plugins and configure the newly installed plugin.
 
-Now you shold be able to add and manage issues estimates.
+Now you shold be able to add and manage new Custom field / Spent time.
+For a new field you can specify the scope visibility for Role and Project 
 
-![issue_view](https://sc-cdn.scaleengine.net/i/a3c7276e23d226061c5eff4aaaca9ffb.png "Issue view")
+![screen](https://github.com/SimSmolin/MyPrintScreen/raw/master/screen.jpg "Screen")
 
-Check out some permission for user's roles.
 
-![issue_view](https://sc-cdn.scaleengine.net/i/154125d7a239cf41d9f8134b9c972bf4.png "User permissions")
 
-View issues report with total estimates and total accepted estimates hours
-
-![issue_view](https://sc-cdn.scaleengine.net/i/ee6dbc64144aed5f4e42d77ef38a6c44.png "Issue reports with estimates")
