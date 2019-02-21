@@ -13,9 +13,9 @@ end
 
 Redmine::Plugin.register :time_entry_custom_field_addons do
   name 'Time Entry Custom Field Addons plugin'
-  author 'Author name'
-  description 'This is a plugin for Redmine'
+  author 'Sergey Melnikov'
+  description 'This is a plugin for Redmine. Allow control the scope visibility timelog Custom field.'
   version '0.0.1'
-  url 'http://example.com/path/to/plugin'
-  author_url 'http://example.com/about'
+  url 'https://github.com/SimSmolin/time_entry_custom_field_addons.git'
+  author_url 'https://github.com/SimSmolin'
 end
