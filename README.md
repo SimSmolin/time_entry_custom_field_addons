@@ -13,10 +13,10 @@ This is Redmine plugin to add one feature. Allows you to choose visibility custo
     ```
     For uninstall simple delete directory ```time_entry_custom_field_addons``` into #{RAILS_ROOT}/plugins 
 
- ####NOTE: 
+    ####NOTE: 
    
-    - the plugin has been tested on Redmine 3.4.4 - 3.4.8
-    - the plugin has been tested on Redmine 4.0.1 
+        - the plugin has been tested on Redmine 3.4.4 - 3.4.8
+        - the plugin has been tested on Redmine 4.0.1 
 
 2. Restart Redmine
 
