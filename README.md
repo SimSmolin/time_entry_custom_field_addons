@@ -9,7 +9,7 @@ This is Redmine plugin to add one feature. Allows you to choose visibility custo
    * If you are downloading the plugin directly from GitHub, you can do so by changing into your plugin directory and issuing a command like 
 
     ```
-    https://github.com/SimSmolin/time_entry_custom_field_addons.git
+    git clone https://github.com/SimSmolin/time_entry_custom_field_addons.git
     ```
     For uninstall simple delete directory ```time_entry_custom_field_addons``` into #{RAILS_ROOT}/plugins 
 
