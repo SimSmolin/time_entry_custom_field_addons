@@ -17,7 +17,7 @@ module CustomFieldsHelperPatch
       #
       custom_value.value = custom_value.to_s.gsub("{:user}", User.current.to_s)
       custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours))
-      custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.to_s)
+      custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
       #
       tag = custom_field_tag(name, custom_value)
       tag_id = nil
