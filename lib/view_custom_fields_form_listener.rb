@@ -17,6 +17,7 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # в этом месте должна быть вместо замены формы на дополнение при помощи call_hook
     context[:hook_caller].output_buffer.safe_append = context[:hook_caller].send(:render, {:locals => context}.merge({:partial => "custom_fields_form_patch/form_patch"}))
   end
+
   def controller_time_entries_bulk_edit_before_save(context = {})
     # можно попробовать прямо в поля писать новые значения - вроде даже сохраняет
     # добавлено sim заполнение поля атрибутом
