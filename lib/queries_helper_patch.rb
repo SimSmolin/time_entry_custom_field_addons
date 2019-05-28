@@ -7,6 +7,7 @@ module QueriesHelperPatch
     base.class_eval do
       unloadable
       alias_method :column_value, :column_value_with_patch # method "column_value" was modify
+      alias_method :csv_content, :csv_content_with_patch # method "csv_content" was modify
     end
   end
 
@@ -50,5 +51,19 @@ module QueriesHelperPatch
         format_object(value)
       end
     end
+
+    def csv_content_with_patch(column, item)
+      value = column.value_object(item)
+      if value.is_a?(Array)
+        value.collect {|v|
+
+          csv_value(column, item, v)
+        }.compact.join(', ')
+      else
+        # value = value
+        csv_value(column, item, value).to_s.gsub("{:user}", "").gsub("{:estimated_time}", "").gsub("{:time_now}", "")
+      end
+    end
+
   end
 end
