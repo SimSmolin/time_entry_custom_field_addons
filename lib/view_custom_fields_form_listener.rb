@@ -22,10 +22,10 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # можно попробовать прямо в поля писать новые значения - вроде даже сохраняет
     # добавлено sim заполнение поля атрибутом
     #
-    context[:time_entry].custom_field_values.each do |value|
-      value.value=value.value.gsub("{:user}", User.current.to_s)
-      value.value=value.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]))
-      value.value=value.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
+    context[:time_entry].custom_field_values.each do |field|
+      field.value=field.value.gsub("{:user}", User.current.to_s)
+      field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]))
+      field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
     end
     # context[:custom_field] = context[:custom_field].to_s.gsub("{:user}", User.current.to_s)
     # custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours))
