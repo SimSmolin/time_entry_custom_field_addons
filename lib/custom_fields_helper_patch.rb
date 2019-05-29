@@ -15,9 +15,13 @@ module CustomFieldsHelperPatch
     def custom_field_tag_with_label_with_patch(name, custom_value, options={})
       # добавлено sim заполнение поля атрибутом
       #
-      custom_value.value = custom_value.to_s.gsub("{:user}", User.current.to_s)
-      custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours))
-      custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
+      if "time_entry".include?(name.to_s)
+        custom_value.value = custom_value.to_s.gsub("{:user}", User.current.to_s)
+        if @time_entry.present?
+          custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours))
+        end
+        custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
+      end
       #
       tag = custom_field_tag(name, custom_value)
       tag_id = nil
