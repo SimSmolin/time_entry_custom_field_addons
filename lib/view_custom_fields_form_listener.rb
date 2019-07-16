@@ -1,5 +1,6 @@
 class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
 
+  # добавляем в форму создания пользовательского тексторого поля подсказку какие поля будем "автоподстанавливать"
   def view_custom_fields_form_time_entry_custom_field(context = {})
     buf=context[:hook_caller].output_buffer
     context[:hook_caller].output_buffer=ActionView::OutputBuffer.new
@@ -24,7 +25,7 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     #
     context[:time_entry].custom_field_values.each do |field|
       field.value=field.value.gsub("{:user}", User.current.to_s)
-      field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]))
+      field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours])).gsub(".",",")
       field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
     end
     # context[:custom_field] = context[:custom_field].to_s.gsub("{:user}", User.current.to_s)
