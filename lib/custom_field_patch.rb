@@ -11,7 +11,7 @@ module CustomFieldPatch
       # added sim
       scope :visible_with_project_id, lambda {|*args|
         user = User.current
-        project_id = args.shift
+        project_id = args.shift || 0
         if user.admin?
           # nop
         elsif user.memberships.any?
