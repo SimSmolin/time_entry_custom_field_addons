@@ -18,13 +18,13 @@ module CustomFieldPatch
           where("#{table_name}.visible = ? OR #{table_name}.id IN (SELECT DISTINCT cfr.custom_field_id FROM #{Member.table_name} m" +
                     " INNER JOIN #{MemberRole.table_name} mr ON mr.member_id = m.id" +
                     " INNER JOIN #{table_name_prefix}custom_fields_roles#{table_name_suffix} cfr ON cfr.role_id = mr.role_id" +
-                    " WHERE m.user_id = ?)" +
+                    " WHERE m.user_id = ? AND m.project_id = ?)" +
                     "AND (" +
                     "NOT (#{table_name}.type = 'TimeEntryCustomField') OR " +
                     "(#{table_name}.is_for_all = TRUE OR #{project_id} IN (SELECT project_id FROM #{table_name_prefix}custom_fields_projects#{table_name_suffix} cfp WHERE cfp.custom_field_id = #{table_name}.id))" +
                     ")",
                 # AND (NOT (`custom_fields`.`type` = 'TimeEntryCustomField') OR  (is_for_all = TRUE OR  139 IN (SELECT project_id FROM custom_fields_projects WHERE custom_field_id = id)))
-                true, user.id)
+                true, user.id, project_id)
         else
           where(:visible => true)
         end
