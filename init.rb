@@ -41,6 +41,11 @@ reloader.to_prepare do
   Query.send :include, QueryPatch
 end
 
+# class in query.rb file
+reloader.to_prepare do
+  QueryCustomFieldColumn.send :include, QueryCustomFieldColumnPatch
+end
+
 Redmine::Plugin.register :time_entry_custom_field_addons do
   name 'Time Entry Custom Field Addons plugin'
   author 'Sergey Melnikov'
