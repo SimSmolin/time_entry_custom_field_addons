@@ -13,11 +13,27 @@ module TimeEntryPatch
   end
   # custom_field_values-editable_custom_field_values_with_patch
   module InstanceMethods
+    class CustomFieldValueReadonly < CustomFieldValue
+      attr_accessor :readonly
+      def initialize(attributes)
+        attributes.each do |name, v|
+          send "#{name}=", v
+        end
+      end
+    end
+
     def editable_custom_field_values_readonly_parse(user=nil)
       user ||= User.current
       read_only = read_only_attribute_names(user)
-      visible_custom_field_values(user).each do |value|
-        value.readonly = read_only.include?(value.custom_field_id.to_s)
+      visible_custom_field_values(user).map do |value|
+        valueReadonly = CustomFieldValueReadonly.new ({
+          :custom_field =>value.custom_field,
+          :customized => value.customized,
+          :value =>value.value,
+          :value_was =>value.value_was
+        })
+        valueReadonly.readonly = read_only.include?(value.custom_field_id.to_s)
+        valueReadonly
       end
     end
     
