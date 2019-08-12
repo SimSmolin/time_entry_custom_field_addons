@@ -13,6 +13,7 @@ module QueryPatch
   module InstanceMethods
     def add_custom_fields_filters_with_patch(scope, assoc=nil)
       scope.visible_with_project_id(project_id).where(:is_filter => true).sorted.each do |field|
+      # scope.visible.where(:is_filter => true).sorted.each do |field|
         add_custom_field_filter(field, assoc)
         if assoc.nil?
           add_chained_custom_field_filters(field)

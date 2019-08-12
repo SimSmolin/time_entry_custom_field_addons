@@ -29,7 +29,7 @@ module TimeEntryCustomFieldPatch
 
     def validate_custom_field
       super
-      errors.add(:base, l(:label_role_plural) + ' ' + l('activerecord.errors.messages.blank')) unless visible? || roles.present?
+      errors.add(:base, l(:label_role_plural) + ' ' + l('activerecord.errors.messages.blank')) unless editable? || roles.present?
     end
     #private :validate_custom_field
   end

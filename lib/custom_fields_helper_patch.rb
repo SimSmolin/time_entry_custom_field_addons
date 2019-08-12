@@ -32,5 +32,34 @@ module CustomFieldsHelperPatch
       custom_field_label_tag(name, custom_value, options.merge(:for_tag_id => tag_id)) + tag
     end
 
+    def custom_field_tag_with_label_disabled(name, custom_value, options={})
+      # добавлено sim заполнение поля атрибутом
+      #
+      if "time_entry".include?(name.to_s)
+        custom_value.value = custom_value.to_s.gsub("{:user}", User.current.to_s)
+        if @time_entry.present?
+          custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours)).gsub(".",",")
+        end
+        custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
+      end
+      #
+      tag = custom_value.readonly ? custom_field_tag_disabled(name, custom_value):custom_field_tag(name, custom_value)
+      tag_id = nil
+      ids = tag.scan(/ id="(.+?)"/)
+      if ids.size == 1
+        tag_id = ids.first.first
+      end
+      custom_field_label_tag(name, custom_value, options.merge(:for_tag_id => tag_id)) + tag
+    end
+
+    def custom_field_tag_disabled(prefix, custom_value)
+      custom_value.custom_field.format.edit_tag self,
+      custom_field_tag_id(prefix, custom_value.custom_field),
+      custom_field_tag_name(prefix, custom_value.custom_field),
+      custom_value,
+      :class => "#{custom_value.custom_field.field_format}_cf",
+      :disabled => "disabled"
+    end
+
   end
 end

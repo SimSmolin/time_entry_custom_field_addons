@@ -8,10 +8,20 @@ module TimeEntryPatch
       unloadable
       alias_method_chain :editable_custom_field_values, :patch # method "editable_custom_field_values" was modify
       alias_method_chain :visible_custom_field_values, :patch  # method "visible_custom_field_values" was modify
+
     end
   end
-
+  # custom_field_values-editable_custom_field_values_with_patch
   module InstanceMethods
+    def editable_custom_field_values_readonly_parse(user=nil)
+      user ||= User.current
+      read_only = read_only_attribute_names(user)
+      visible_custom_field_values(user).each do |value|
+        value.readonly = read_only.include?(value.custom_field_id.to_s)
+      end
+    end
+    
+    
     def editable_custom_field_values_with_patch(user=nil)
       read_only = read_only_attribute_names(user)
       visible_custom_field_values(user).reject do |value|
@@ -48,7 +58,7 @@ module TimeEntryPatch
           h
         end
         fields_with_roles = {}
-        TimeEntryCustomField.where(:visible => false).joins(:roles).pluck(:id, "role_id").each do |field_id, role_id|
+        TimeEntryCustomField.where(:editable => false).joins(:roles).pluck(:id, "role_id").each do |field_id, role_id|
           fields_with_roles[field_id] ||= []
           fields_with_roles[field_id] << role_id
         end
