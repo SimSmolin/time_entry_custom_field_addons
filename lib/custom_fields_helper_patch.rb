@@ -33,14 +33,14 @@ module CustomFieldsHelperPatch
     end
 
     def custom_field_tag_with_label_disabled(name, custom_value, options={})
-      # добавлено sim заполнение поля атрибутом
+      # добавлено sim отображение поля недоступноо для редактирования
       #
       if "time_entry".include?(name.to_s)
-        custom_value.value = custom_value.to_s.gsub("{:user}", User.current.to_s)
+        custom_value.value = custom_value.to_s.gsub("{:user}", "")
         if @time_entry.present?
-          custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours)).gsub(".",",")
+          custom_value.value = custom_value.to_s.gsub("{:estimated_time}", "")
         end
-        custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
+        custom_value.value = custom_value.to_s.gsub("{:time_now}", "")
       end
       #
       tag = custom_value.readonly ? custom_field_tag_disabled(name, custom_value):custom_field_tag(name, custom_value)
