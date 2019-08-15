@@ -6,8 +6,8 @@ module TimeEntryPatch
 
     base.class_eval do
       unloadable
-      alias_method_chain :editable_custom_field_values, :patch # method "editable_custom_field_values" was modify
-      alias_method_chain :visible_custom_field_values, :patch  # method "visible_custom_field_values" was modify
+      alias_method :editable_custom_field_values, :editable_custom_field_values_with_patch # method "editable_custom_field_values" was modify
+      alias_method :visible_custom_field_values, :visible_custom_field_values_with_patch  # method "visible_custom_field_values" was modify
 
     end
   end
