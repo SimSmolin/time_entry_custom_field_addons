@@ -6,8 +6,8 @@ module TimeEntryPatch
 
     base.class_eval do
       unloadable
-      alias_method_chain :editable_custom_field_values, :patch # method "editable_custom_field_values" was modify
-      alias_method_chain :visible_custom_field_values, :patch  # method "visible_custom_field_values" was modify
+      alias_method :editable_custom_field_values, :editable_custom_field_values_with_patch # method "editable_custom_field_values" was modify
+      alias_method :visible_custom_field_values, :visible_custom_field_values_with_patch  # method "visible_custom_field_values" was modify
 
     end
   end
@@ -88,6 +88,7 @@ module TimeEntryPatch
           end
         end
         workflow_rules.each do |attr, rules|
+
           next if rules.size < roles.size
           uniq_rules = rules.values.uniq
           if uniq_rules.size == 1
@@ -101,6 +102,15 @@ module TimeEntryPatch
       result
     end
     private :workflow_rule_by_attribute
+
+    def user_collection_for_select_options
+      project ||= self.try(:project)
+      collection = []
+      collection << [ User.current.name, User.current.id ]
+      project_members = []
+      project_members = project.members.to_a.map { |memb| [memb.name, memb.user_id]} unless project.nil?
+      collection.concat(project_members).uniq
+    end
 
   end
 end

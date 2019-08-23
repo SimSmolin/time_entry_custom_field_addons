@@ -32,6 +32,11 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours))
     # custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
     #
-
   end
+
+  # если пришло поле с ID пользователя в параметрах, то подменяет атрибут user
+  def controller_timelog_edit_before_save(context = {})
+    context[:time_entry].user= User.find_by(:id => context[:params][:time_entry][:user_id]) unless User.find_by(:id => context[:params][:time_entry][:user_id]).nil?
+  end
+
 end

@@ -23,6 +23,10 @@
   <% @time_entry.editable_custom_field_values_readonly_parse.each do |value| %>
     <p><%= custom_field_tag_with_label_disabled  :time_entry, value %></p>
   <% end %>
+  <% if User.current.roles.to_a.map {|role| role[:permissions]}.flatten.select{|permission| permission == :edit_time_entries_on_behalf_of}.present? %>
+    <p><%= f.select :user_id, @time_entry.user_collection_for_select_options %></p>
+  <% end %>
+
   <%= call_hook(:view_timelog_edit_form_bottom, { :time_entry => @time_entry, :form => f }) %>
 </div>
 

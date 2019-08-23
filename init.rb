@@ -53,4 +53,10 @@ Redmine::Plugin.register :time_entry_custom_field_addons do
   version '0.0.9'
   url 'https://github.com/SimSmolin/time_entry_custom_field_addons.git'
   author_url 'https://github.com/SimSmolin'
+
+  # добавляем в блок полномочий ролей управления трудозатрат новую пермижн
+  project_module :time_tracking do
+    permission :edit_time_entries_on_behalf_of, {}, :require => :loggedin
+  end
+
 end
