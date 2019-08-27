@@ -38,7 +38,9 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
 
   # если пришло поле с ID пользователя в параметрах, то подменяет атрибут user
   def controller_timelog_edit_before_save(context = {})
-    if context[:time_entry].user != User.find_by(:id => context[:params][:time_entry][:user_id])
+    # log.puts context[:time_entry].user.to_s + " = " + (User.find_by(:id => context[:params][:time_entry][:user_id])).to_s
+    if context[:time_entry].user != User.find_by(:id => context[:params][:time_entry][:user_id]) &&
+        context[:params][:time_entry][:user_id].present?
       context[:time_entry].user= User.find_by(:id => context[:params][:time_entry][:user_id])
       context[:time_entry].comments = User.current.name.to_s + ": " +
           context[:time_entry].comments.gsub(User.current.name.to_s + ": ", "")
