@@ -29,8 +29,21 @@ module CustomFieldPatch
           where(:visible => true)
         end
       }
-      # end added block
+      # вот этот изврат изза того что after_save в основном классе сделано без метода (def)
+      # перед сохранением запоминаем состояние roles а потом восстанавливаем
+      @records_roles = nil
+      before_save do |field|
+        @records_roles = field.roles.records
+      end
+      after_save do |field|
+        begin
+        field.roles << @records_roles unless @records_roles.nil?
+        rescue
 
+        end
+      end
+
+      # end added block
     end
   end
 
