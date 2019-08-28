@@ -108,7 +108,7 @@ module TimeEntryPatch
       collection = []
       collection << [ User.current.name, User.current.id ]
       project_members = []
-      project_members = project.members.to_a.map { |memb| [memb.name, memb.user_id]} unless project.nil?
+      project_members = project.members.to_a.map { |memb| [memb.name, memb.user_id]}.sort unless project.nil?
       collection.concat(project_members).uniq
     end
 
