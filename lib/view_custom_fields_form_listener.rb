@@ -3,11 +3,10 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
   # добавляем в форму создания пользовательского тексторого поля подсказку какие поля будем "автоподстанавливать"
   def view_custom_fields_form_time_entry_custom_field(context = {})
     # CustomField.where(type: :TimeEntryCustomField).update_all(visible: true)
-    buf=context[:hook_caller].output_buffer
+    str=String::new(context[:hook_caller].output_buffer)
     context[:hook_caller].output_buffer=ActionView::OutputBuffer.new
-    str=String::new(buf)
-    # default_field_str = str.split(/<.?p>/).select{|m| m.include? "custom_field_default_value"}[0]
-    default_field_str = str
+    default_field_str = str.split(/<.?p>/).select{|m| m.include? "custom_field_default_value"}[0]
+    # если формат поля текст то добавляем справочные поля после значения по умолчанию
     if context[:custom_field].field_format=="string"
     context[:hook_caller].output_buffer.safe_append = str.sub(default_field_str, default_field_str+
         content_tag(:em,"Автозаполнение:", class: "info")+
