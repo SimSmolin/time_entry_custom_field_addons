@@ -112,5 +112,15 @@ module TimeEntryPatch
       collection.concat(project_members).uniq
     end
 
+    # Copies attributes from another TimeEntry, arg can be an id or an TimeEntry
+    #
+    def copy_from(arg)
+      time_entry = arg.is_a?(TimeEntry) ? arg : TimeEntry.visible.find(arg)
+      self.attributes = time_entry.attributes.dup.except("id", "created_on", "updated_on")
+      self.custom_field_values = time_entry.custom_field_values.inject({}) {|h,v| h[v.custom_field_id] = v.value; h}
+      # @copied_from = time_entry
+      self
+    end
+
   end
 end
