@@ -1,0 +1,17 @@
+<table>
+  <tbody>
+  <tr>
+    <th>Настройки: </th>
+    <td>
+      <%= l(:time_entry_period_close_date) %>
+      <input type="text" id="period_close_date"
+             value="<%= settings['period_close_date'] %>"
+             size="3"
+             name="settings[period_close_date]" >
+      <%= l(:time_entry_period_close_date_end) %>
+      <%= text_field_tag(:months_ago, settings['months_ago'], {:size => 3, :name => "settings[months_ago]"}) %>
+      <%= l(:time_entry_period_months_ago) %>
+    </td>
+  </tr>
+  </tbody>
+</table>

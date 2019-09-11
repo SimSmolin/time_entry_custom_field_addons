@@ -14,7 +14,9 @@ module TimeEntryPatch
   # custom_field_values-editable_custom_field_values_with_patch
   module InstanceMethods
     class CustomFieldValueReadonly < CustomFieldValue
+
       attr_accessor :readonly
+
       def initialize(attributes)
         attributes.each do |name, v|
           send "#{name}=", v
@@ -32,12 +34,23 @@ module TimeEntryPatch
           :value =>value.value,
           :value_was =>value.value_was
         })
-        valueReadonly.readonly = read_only.include?(value.custom_field_id.to_s)
+        # в новом классе наследнике расставляем признак readonly в соответствии с ролью и участием в проекте
+        # valueReadonly.readonly = read_only.include?(value.custom_field_id.to_s)
+        # но если период закрыт то поля делаем нередактрируемыми по дате и признаку что поле участвует в закрытии периода
+        valueReadonly.readonly = (valueReadonly.custom_field.participant_period_close? and # участвует в закрытии периода
+            valid_period_close?(valueReadonly.customized.spent_on)) or # дата уже закрыта?
+            read_only.include?(value.custom_field_id.to_s) # readonly по проект/роль
         valueReadonly
       end
     end
-    
-    
+
+    def valid_period_close?(date_for_field)
+      shift = Setting.plugin_time_entry_custom_field_addons['period_close_date'] > DateTime.now ? 1:0
+      val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + shift
+      date_close = DateTime.now.beginning_of_month - val_setting_months.month
+      date_for_field < date_close
+    end
+
     def editable_custom_field_values_with_patch(user=nil)
       read_only = read_only_attribute_names(user)
       visible_custom_field_values(user).reject do |value|

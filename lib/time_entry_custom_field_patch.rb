@@ -6,6 +6,9 @@ module TimeEntryCustomFieldPatch
 
     base.class_eval do
       unloadable
+
+      has_and_belongs_to_many :trackers, :join_table => "#{table_name_prefix}custom_fields_trackers#{table_name_suffix}", :foreign_key => "custom_field_id" # added from IssueCustomField TODO sim
+
       has_and_belongs_to_many :projects, :join_table => "#{table_name_prefix}custom_fields_projects#{table_name_suffix}", :foreign_key => "custom_field_id"
       has_many :time_entries, :through => :time_entry_custom_values
       safe_attributes 'project_ids'

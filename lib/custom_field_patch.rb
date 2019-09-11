@@ -10,8 +10,10 @@ module CustomFieldPatch
 
       # added sim
       #
-      has_and_belongs_to_many :trackers, :join_table => "#{table_name_prefix}custom_fields_trackers#{table_name_suffix}", :foreign_key => "custom_field_id" # added from IssueCustomField TODO sim
+      safe_attributes 'participant_period_close'
 
+      # has_and_belongs_to_many :trackers, :join_table => "#{table_name_prefix}custom_fields_trackers#{table_name_suffix}", :foreign_key => "custom_field_id" # added from IssueCustomField TODO sim
+      #
       scope :visible_with_project_id, lambda {|*args|
         user = User.current
         project_id = args.shift || 0
@@ -91,4 +93,9 @@ module CustomFieldPatch
       errs
     end
   end
+
+  def participant_period_close?
+    participant_period_close == '1'
+  end
+
 end
