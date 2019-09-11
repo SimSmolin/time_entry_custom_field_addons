@@ -37,9 +37,9 @@ module TimeEntryPatch
         # в новом классе наследнике расставляем признак readonly в соответствии с ролью и участием в проекте
         # valueReadonly.readonly = read_only.include?(value.custom_field_id.to_s)
         # но если период закрыт то поля делаем нередактрируемыми по дате и признаку что поле участвует в закрытии периода
-        valueReadonly.readonly = (valueReadonly.custom_field.participant_period_close? and # участвует в закрытии периода
-            valid_period_close?(valueReadonly.customized.spent_on)) or # дата уже закрыта?
-            read_only.include?(value.custom_field_id.to_s) # readonly по проект/роль
+        valueReadonly.readonly = ((valueReadonly.custom_field.participant_period_close? && # участвует в закрытии периода
+            valid_period_close?(valueReadonly.customized.spent_on)) || # дата уже закрыта?
+            read_only.include?(value.custom_field_id.to_s)) # readonly по проект/роль
         valueReadonly
       end
     end
