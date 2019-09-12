@@ -36,7 +36,7 @@ module CustomFieldPatch
       # перед сохранением запоминаем состояние roles а потом восстанавливаем
       @records_roles = nil
       before_save do |field|
-        @records_roles = field.roles.records
+        @records_roles = field.roles.to_a
       end
       after_save do |field|
         begin
