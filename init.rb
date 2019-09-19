@@ -10,6 +10,7 @@ require_relative 'lib/time_entry_query_patch'
 require_relative 'lib/query_patch'
 require_relative 'lib/timelog_controller_patch'
 require_relative 'lib/redmine/field_format_patch'
+require_relative 'lib/redmine/helpers_timereport_patch'
 
 # ActionDispatch::Callbacks.to_prepare do                for Rails 5.0 -- deprecated TODO sim need testing
 # ActiveSupport::Reloader.to_prepare do                  for Rails 5.1
@@ -27,6 +28,7 @@ reloader.to_prepare do
   QueryCustomFieldColumn.send :include, QueryCustomFieldColumnPatch
   TimelogController.send :include, TimelogControllerPatch
   Redmine::FieldFormat::Base.send :include, RedmineFieldFormatPath
+  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
 end
 
 Redmine::Plugin.register :time_entry_custom_field_addons do
