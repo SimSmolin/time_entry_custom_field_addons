@@ -2,7 +2,7 @@
   <tr class="last-level">
     <td class="name"></td>
     <% @report.periods.each do |period| -%>
-      <td class="hours"><%= Date.commercial(period[0,4].to_i,period[5,7].to_i,1) %></td>
+      <td class="hours"><%= Date.commercial(period[0,4].to_i,period[5,7].to_i,1).strftime("%d.%m.%y") %></td>
     <% end -%>
   </tr>
 <% end -%>
