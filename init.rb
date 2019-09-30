@@ -28,7 +28,7 @@ reloader.to_prepare do
   QueryCustomFieldColumn.send :include, QueryCustomFieldColumnPatch
   TimelogController.send :include, TimelogControllerPatch
   Redmine::FieldFormat::Base.send :include, RedmineFieldFormatPath
-  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
+#  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
 end
 
 Redmine::Plugin.register :time_entry_custom_field_addons do
