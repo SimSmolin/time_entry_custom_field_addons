@@ -8,6 +8,7 @@ module TimeEntryPatch
       unloadable
       alias_method :editable_custom_field_values, :editable_custom_field_values_with_patch # method "editable_custom_field_values" was modify
       alias_method :visible_custom_field_values, :visible_custom_field_values_with_patch  # method "visible_custom_field_values" was modify
+      alias_method :editable_by?, :editable_by_with_patch?  # method "editable_by?" was modify
 
     end
   end
@@ -22,6 +23,22 @@ module TimeEntryPatch
           send "#{name}=", v
         end
       end
+    end
+
+    # Returns true if the time entry can be edited by usr, otherwise false
+    def editable_by_with_patch?(usr)
+      visible?(usr) && (
+      (usr == user && usr.allowed_to?(:edit_own_time_entries, project)) ||
+          usr.allowed_to?(:edit_time_entries, project) ||
+          usr.allowed_to?(:view_time_entries_without_edit, project)
+      )
+    end
+
+    def only_viewable_by?(usr)
+      visible?(usr) && !(usr == user && usr.allowed_to?(:edit_own_time_entries, project)) &&
+          !(usr.allowed_to?(:edit_time_entries, project)) &&
+          usr.allowed_to?(:view_time_entries_without_edit, project)
+
     end
 
     def editable_custom_field_values_readonly_parse(user=nil)

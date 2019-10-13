@@ -1,25 +1,26 @@
 <%= error_messages_for 'time_entry' %>
 <%= back_url_hidden_field_tag %>
-
 <div class="box tabular">
+<% do_disabled = @time_entry.only_viewable_by?(User.current) %>
   <% if @time_entry.new_record? && params[:project_id] %>
     <%= hidden_field_tag 'project_id', params[:project_id] %>
   <% elsif @time_entry.new_record? && params[:issue_id] %>
     <%= hidden_field_tag 'issue_id', params[:issue_id] %>
   <% else %>
-    <p><%= f.select :project_id, project_tree_options_for_select(Project.allowed_to(:log_time).to_a, :selected => @time_entry.project, :include_blank => true), :required => true %></p>
+    <p><%= f.select :project_id, project_tree_options_for_select(Project.allowed_to(:log_time).to_a, :selected => @time_entry.project, :include_blank => true),
+                    :disabled => do_disabled, :required => true %></p>
   <% end %>
 
   <p>
-    <%= f.text_field :issue_id, :size => 6, :required => Setting.timelog_required_fields.include?('issue_id') %>
+    <%= f.text_field :issue_id, :size => 6, :disabled => do_disabled, :required => Setting.timelog_required_fields.include?('issue_id') %>
     <span id="time_entry_issue">
-      <%=  link_to_issue(@time_entry.issue) if @time_entry.issue.try(:visible?) %>
-    </span>
+    <%=  link_to_issue(@time_entry.issue) if @time_entry.issue.try(:visible?) %>
+  </span>
   </p>
-  <p><%= f.date_field :spent_on, :size => 10, :required => true %><%= calendar_for('time_entry_spent_on') %></p>
-  <p><%= f.hours_field :hours, :size => 6, :required => true %></p>
-  <p><%= f.text_field :comments, :size => 100, :maxlength => 1024, :required => Setting.timelog_required_fields.include?('comments') %></p>
-  <p><%= f.select :activity_id, activity_collection_for_select_options(@time_entry), :required => true %></p>
+  <p><%= f.date_field :spent_on, :size => 10, :disabled => do_disabled, :required => true %><%= calendar_for('time_entry_spent_on') %></p>
+  <p><%= f.hours_field :hours, :size => 6, :disabled => do_disabled, :required => true %></p>
+  <p><%= f.text_field :comments, :size => 100, :disabled => do_disabled, :maxlength => 1024, :required => Setting.timelog_required_fields.include?('comments') %></p>
+  <p><%= f.select :activity_id, activity_collection_for_select_options(@time_entry), :disabled => '', :required => true %></p>
   <% @time_entry.editable_custom_field_values_readonly_parse.each do |value| %>
     <p><%= custom_field_tag_with_label_disabled  :time_entry, value %></p>
   <% end %>

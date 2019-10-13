@@ -35,13 +35,14 @@ Redmine::Plugin.register :time_entry_custom_field_addons do
   name 'Time Entry Custom Field Addons plugin'
   author 'Sergey Melnikov'
   description 'This is a plugin for Redmine. Allow control the scope visibility timelog Custom field.'
-  version '0.0.15'
+  version '0.0.16'
   url 'https://github.com/SimSmolin/time_entry_custom_field_addons.git'
   author_url 'https://github.com/SimSmolin'
 
   # добавляем в блок полномочий ролей управления трудозатрат новую пермижн
   project_module :time_tracking do
     permission :edit_time_entries_on_behalf_of, {}, :require => :loggedin
+    permission :view_time_entries_without_edit, {}, :require => :loggedin
   end
 
   settings :default => {'empty' => true}, :partial => 'settings/date_set'

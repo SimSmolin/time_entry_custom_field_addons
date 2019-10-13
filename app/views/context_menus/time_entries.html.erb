@@ -1,10 +1,11 @@
 <ul>
+  <%    edit_allowed = @time_entries.all? {|t| t.editable_by?(User.current) && !t.only_viewable_by?(User.current) } %>
   <% if !@time_entry.nil? -%>
     <li><%= context_menu_link l(:button_edit), {:controller => 'timelog', :action => 'edit', :id => @time_entry},
-            :class => 'icon icon-edit', :disabled => !@can[:edit] %></li>
+            :class => 'icon icon-edit', :disabled => !edit_allowed %></li>
   <% else %>
     <li><%= context_menu_link l(:button_edit), {:controller => 'timelog', :action => 'bulk_edit', :ids => @time_entries.collect(&:id)},
-            :class => 'icon icon-edit', :disabled => !@can[:edit] %></li>
+            :class => 'icon icon-edit', :disabled => !edit_allowed %></li>
   <% end %>
 
   <%= call_hook(:view_time_entries_context_menu_start, {:time_entries => @time_entries, :can => @can, :back => @back }) %>
@@ -15,7 +16,7 @@
     <ul>
     <% @activities.each do |u| -%>
         <li><%= context_menu_link u.name, {:controller => 'timelog', :action => 'bulk_update', :ids => @time_entries.collect(&:id), :time_entry => {'activity_id' => u}, :back_url => @back}, :method => :post,
-                                  :selected => (@time_entry && u == @time_entry.activity), :disabled => !@can[:edit] %></li>
+                                  :selected => (@time_entry && u == @time_entry.activity), :disabled => !edit_allowed %></li>
     <% end -%>
     </ul>
   </li>
@@ -40,7 +41,7 @@
   <li>
     <%= context_menu_link l(:button_delete),
       {:controller => 'timelog', :action => 'destroy', :ids => @time_entries.collect(&:id), :back_url => @back},
-      :method => :delete, :data => {:confirm => l(:text_time_entries_destroy_confirmation)}, :class => 'icon icon-del', :disabled => !@can[:delete] %>
+      :method => :delete, :data => {:confirm => l(:text_time_entries_destroy_confirmation)}, :class => 'icon icon-del', :disabled => !edit_allowed %>
   </li>
 
 
