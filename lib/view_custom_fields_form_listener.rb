@@ -25,6 +25,10 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # добавлено sim заполнение поля атрибутом
     #
     context[:time_entry].editable_custom_field_values.each do |field|
+      # если пустое то снова подставляем значение по умолчанию
+      if field.value.delete(" ").empty?
+        field.value=field.custom_field.default_value
+      end
       field.value=field.value.gsub("{:user}", User.current.to_s)
       field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours])).gsub(".",",")
       field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))

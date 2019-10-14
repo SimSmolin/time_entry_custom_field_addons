@@ -18,6 +18,10 @@ module TimeEntryCustomFieldPatch
     def visible_by?(project, user=User.current)
       super || (roles & user.roles_for_project(project)).present?
     end
+
+    def editable_by?(project, user=User.current)
+      (roles & user.roles_for_project(project)).present?
+    end
     #private :visible_by?
 
     def visibility_by_project_condition(project_key=nil, user=User.current, id_column=nil)

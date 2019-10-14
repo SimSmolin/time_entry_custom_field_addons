@@ -16,6 +16,10 @@ module CustomFieldsHelperPatch
       # добавлено sim заполнение поля атрибутом
       #
       if "time_entry".include?(name.to_s)
+        # если пустое то снова подставляем значение по умолчанию
+        if custom_value.value.delete(" ").empty?
+          custom_value.value=custom_value.custom_field.default_value
+        end
         custom_value.value = custom_value.to_s.gsub("{:user}", User.current.to_s)
         if @time_entry.present?
           custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours)).gsub(".",",")
@@ -36,11 +40,11 @@ module CustomFieldsHelperPatch
       # добавлено sim отображение поля недоступноо для редактирования
       #
       if "time_entry".include?(name.to_s)
-        custom_value.value = custom_value.to_s.gsub("{:user}", "")
+        custom_value.value= custom_value.to_s.gsub("{:user}", "")
         if @time_entry.present?
-          custom_value.value = custom_value.to_s.gsub("{:estimated_time}", "")
+          custom_value.value= custom_value.to_s.gsub("{:estimated_time}", "")
         end
-        custom_value.value = custom_value.to_s.gsub("{:time_now}", "")
+        custom_value.value= custom_value.to_s.gsub("{:time_now}", "")
       end
       #
       tag = custom_value.readonly ? custom_field_tag_disabled(name, custom_value):custom_field_tag(name, custom_value)

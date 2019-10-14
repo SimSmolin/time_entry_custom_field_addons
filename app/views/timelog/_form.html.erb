@@ -6,9 +6,12 @@
     <%= hidden_field_tag 'project_id', params[:project_id] %>
   <% elsif @time_entry.new_record? && params[:issue_id] %>
     <%= hidden_field_tag 'issue_id', params[:issue_id] %>
-  <% else %>
-    <p><%= f.select :project_id, project_tree_options_for_select(Project.allowed_to(:log_time).to_a, :selected => @time_entry.project, :include_blank => true),
-                    :disabled => do_disabled, :required => true %></p>
+  <% else%>
+    <% if do_disabled %>
+      <p><%= f.select :project_id, project_tree_options_for_select([@time_entry.project], :selected => @time_entry.project), {:required => true}, :disabled => do_disabled %></p>
+    <% else %>
+      <p><%= f.select :project_id, project_tree_options_for_select(Project.allowed_to(:log_time).to_a, :selected => @time_entry.project, :include_blank => true), :required => true %></p>
+    <% end %>
   <% end %>
 
   <p>
@@ -20,7 +23,7 @@
   <p><%= f.date_field :spent_on, :size => 10, :disabled => do_disabled, :required => true %><%= calendar_for('time_entry_spent_on') %></p>
   <p><%= f.hours_field :hours, :size => 6, :disabled => do_disabled, :required => true %></p>
   <p><%= f.text_field :comments, :size => 100, :disabled => do_disabled, :maxlength => 1024, :required => Setting.timelog_required_fields.include?('comments') %></p>
-  <p><%= f.select :activity_id, activity_collection_for_select_options(@time_entry), :disabled => '', :required => true %></p>
+  <p><%= f.select :activity_id, activity_collection_for_select_options(@time_entry), {:required => true}, :disabled => do_disabled %></p>
   <% @time_entry.editable_custom_field_values_readonly_parse.each do |value| %>
     <p><%= custom_field_tag_with_label_disabled  :time_entry, value %></p>
   <% end %>
