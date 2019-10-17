@@ -27,7 +27,7 @@
   <% @time_entry.editable_custom_field_values_readonly_parse.each do |value| %>
     <p><%= custom_field_tag_with_label_disabled  :time_entry, value %></p>
   <% end %>
-  <% if @project.users_by_role
+  <% if !@project.nil? && @project.users_by_role
       .map {|k,v|  v.include?(User.current)? k:nil}
       .compact.map {|role| role[:permissions]}
       .flatten.select{|permission| permission == :edit_time_entries_on_behalf_of}
