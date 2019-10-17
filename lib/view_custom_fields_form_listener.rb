@@ -25,19 +25,30 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # добавлено sim заполнение поля атрибутом
     #
     context[:time_entry].editable_custom_field_values.each do |field|
-      # если пустое то снова подставляем значение по умолчанию
-      if field.value.delete(" ").empty?
-        field.value=field.custom_field.default_value
+      if !valid_period_close?(field.customized.spent_on)
+        # если пустое то снова подставляем значение по умолчанию
+        if (field.value.nil? || field.value.delete(" ").empty?)
+          field.value=field.custom_field.default_value
+        end
+        field.value=field.value.gsub("{:user}", User.current.to_s)
+        field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours])).gsub(".",",")
+        field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
       end
-      field.value=field.value.gsub("{:user}", User.current.to_s)
-      field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours])).gsub(".",",")
-      field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
     end
     # context[:custom_field] = context[:custom_field].to_s.gsub("{:user}", User.current.to_s)
     # custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours))
     # custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
     #
   end
+
+  def valid_period_close?(date_for_field)
+    date_for_field = date_for_field || DateTime.parse('1970-01-01')
+    shift = Setting.plugin_time_entry_custom_field_addons['period_close_date'] > DateTime.now ? 1:0
+    val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + shift
+    date_close = DateTime.now.beginning_of_month - val_setting_months.month
+    date_for_field < date_close
+  end
+
 
   # если пришло поле с ID пользователя в параметрах, то подменяет атрибут user
   def controller_timelog_edit_before_save(context = {})
