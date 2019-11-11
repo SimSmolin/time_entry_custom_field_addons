@@ -43,7 +43,7 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
 
   def valid_period_close?(date_for_field)
     date_for_field = date_for_field || DateTime.parse('1970-01-01')
-    shift = Setting.plugin_time_entry_custom_field_addons['period_close_date'] > DateTime.now ? 1:0
+    shift = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i > DateTime.now.day ? 1:0
     val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + shift
     date_close = DateTime.now.beginning_of_month - val_setting_months.month
     date_for_field < date_close
