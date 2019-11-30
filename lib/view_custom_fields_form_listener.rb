@@ -32,13 +32,9 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
         end
         field.value=field.value.gsub("{:user}", User.current.to_s)
         field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours])).gsub(".",",")
-        field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
+        field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") {:time_now}")
       end
     end
-    # context[:custom_field] = context[:custom_field].to_s.gsub("{:user}", User.current.to_s)
-    # custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours))
-    # custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M"))
-    #
   end
 
   def valid_period_close?(date_for_field)

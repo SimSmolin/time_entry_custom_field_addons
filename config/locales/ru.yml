@@ -13,6 +13,9 @@
 ru:
   permission_edit_time_entries_on_behalf_of: Редактирование учёта времени от имени другого пользователя
   permission_view_time_entries_without_edit: Просмотр формы учета трудозатрат без права редактирования базовых полей
+  permission_edit_time_entries_advantage_time: Дополительное время для изменения полей закрытых периодов
+  time_entry_period_close_advantage_start: Предоставить дополнительно
+  time_entry_period_close_advantage_end: дней пользователям с полномочием "Дополительное время для изменения полей закрытых периодов"
   time_entry_period_close_date: Закрытие периода производить
   time_entry_period_close_date_end: числа. За
   time_entry_period_months_ago: месяцев назад. (0 - остается доступным только текущий месяц)
