@@ -20,7 +20,7 @@ module TimeEntryCustomFieldPatch
     end
 
     def editable_by?(project, user=User.current)
-      (roles & user.roles_for_project(project)).present? || self.editable
+      (roles & user.roles_for_project(project)).present? #|| self.editable
     end
     #private :visible_by?
 

@@ -27,18 +27,21 @@ module TimeEntryPatch
 
     # Returns true if the time entry can be edited by usr, otherwise false
     def editable_by_with_patch?(usr)
-      visible?(usr) && (
-      (usr == user && usr.allowed_to?(:edit_own_time_entries, project)) ||
+      ((usr == self.user && usr.allowed_to?(:edit_own_time_entries, project)) ||
           usr.allowed_to?(:edit_time_entries, project) ||
           usr.allowed_to?(:view_time_entries_without_edit, project)
-      )
+      ) && !valid_period_close?(self.spent_on)
     end
 
     def only_viewable_by?(usr)
-      visible?(usr) && !(usr == user && usr.allowed_to?(:edit_own_time_entries, project)) &&
-          !(usr.allowed_to?(:edit_time_entries, project)) &&
-          usr.allowed_to?(:view_time_entries_without_edit, project)
-
+      #visible?(usr) &&
+      if !valid_period_close?(self.spent_on)
+        !(usr == self.user && usr.allowed_to?(:edit_own_time_entries, project))
+        #!(usr.allowed_to?(:edit_time_entries, project)) &&
+        #usr.allowed_to?(:view_time_entries_without_edit, project)
+      else
+        true
+      end
     end
 
     def editable_custom_field_values_readonly_parse(user=nil)
@@ -58,6 +61,7 @@ module TimeEntryPatch
             valid_period_close?(valueReadonly.customized.spent_on)) || # дата уже закрыта?
             # read_only.include?(value.custom_field_id.to_s)) # readonly по проект/роль
             !value.custom_field.editable_by?(project, user)) # readonly по проект/роль
+            #value.custom_field.editable_by_with_patch?(user)) # readonly по проект/роль
         valueReadonly
       end
     end
