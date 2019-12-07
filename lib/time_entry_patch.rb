@@ -27,18 +27,21 @@ module TimeEntryPatch
 
     # Returns true if the time entry can be edited by usr, otherwise false
     def editable_by_with_patch?(usr)
-      visible?(usr) && (
-      (usr == user && usr.allowed_to?(:edit_own_time_entries, project)) ||
+      ((usr == self.user && usr.allowed_to?(:edit_own_time_entries, project)) ||
           usr.allowed_to?(:edit_time_entries, project) ||
           usr.allowed_to?(:view_time_entries_without_edit, project)
-      )
+      ) && !valid_period_close?(self.spent_on)
     end
 
     def only_viewable_by?(usr)
-      visible?(usr) && !(usr == user && usr.allowed_to?(:edit_own_time_entries, project)) &&
-          !(usr.allowed_to?(:edit_time_entries, project)) &&
-          usr.allowed_to?(:view_time_entries_without_edit, project)
-
+      #visible?(usr) &&
+      if !valid_period_close?(self.spent_on)
+        !(usr == self.user && usr.allowed_to?(:edit_own_time_entries, project))
+        #!(usr.allowed_to?(:edit_time_entries, project)) &&
+        #usr.allowed_to?(:view_time_entries_without_edit, project)
+      else
+        true
+      end
     end
 
     def editable_custom_field_values_readonly_parse(user=nil)
@@ -46,7 +49,7 @@ module TimeEntryPatch
       read_only = read_only_attribute_names(user)
       visible_custom_field_values(user).map do |value|
         valueReadonly = CustomFieldValueReadonly.new ({
-          :custom_field =>value.custom_field,
+          :custom_field => value.custom_field,
           :customized => value.customized,
           :value =>value.value,
           :value_was =>value.value_was
