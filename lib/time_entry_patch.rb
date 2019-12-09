@@ -49,7 +49,7 @@ module TimeEntryPatch
       read_only = read_only_attribute_names(user)
       visible_custom_field_values(user).map do |value|
         valueReadonly = CustomFieldValueReadonly.new ({
-          :custom_field =>value.custom_field,
+          :custom_field => value.custom_field,
           :customized => value.customized,
           :value =>value.value,
           :value_was =>value.value_was
