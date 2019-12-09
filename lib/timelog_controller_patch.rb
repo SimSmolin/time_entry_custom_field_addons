@@ -3,6 +3,7 @@ module TimelogControllerPatch
     base.send(:include, InstanceMethods)
 
     base.class_eval do
+      before_action :check_editability, :only => [:update]
       unloadable
       alias_method :new, :new_patch # method "new" was modify
     end
