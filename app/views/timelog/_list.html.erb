@@ -37,7 +37,7 @@
     <%= content_tag('td', column_content(column, entry), :class => column.css_classes) %>
     <% end %>
     <td class="buttons">
-    <% if entry.only_viewable_by?(User.current) -%>
+    <% if entry.list_only_viewable_by?(User.current) -%>
         <%= link_to l(:button_view), only_view_time_entry_path(entry),
                     :title => l(:button_view),
                     :class => 'icon-only icon-document' %>

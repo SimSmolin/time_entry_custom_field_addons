@@ -1,5 +1,6 @@
 <ul>
-  <%    edit_allowed = @time_entries.all? {|t| t.editable_by?(User.current) && !t.only_viewable_by?(User.current) && !t.valid_period_close?(t.spent_on)} %>
+  <%#    edit_allowed = @time_entries.all? {|t| t.editable_by?(User.current) && !t.only_viewable_by?(User.current) && !t.valid_period_close?(t.spent_on)} %>
+  <%    edit_allowed = @time_entries.all? {|t| t.editable_by?(User.current) && !t.valid_period_close?(t.spent_on)} %>
   <% if !@time_entry.nil? -%>
     <li><%= context_menu_link l(:button_edit), {:controller => 'timelog', :action => 'edit', :id => @time_entry},
             :class => 'icon icon-edit', :disabled => !edit_allowed %></li>
@@ -38,11 +39,9 @@
 
   <%= call_hook(:view_time_entries_context_menu_end, {:time_entries => @time_entries, :can => @can, :back => @back }) %>
 
-  <li>
-    <%= context_menu_link l(:button_delete),
-      {:controller => 'timelog', :action => 'destroy', :ids => @time_entries.collect(&:id), :back_url => @back},
-      :method => :delete, :data => {:confirm => l(:text_time_entries_destroy_confirmation)}, :class => 'icon icon-del', :disabled => !edit_allowed %>
-  </li>
+<!--  <li>-->
+    <%#= context_menu_link l(:button_delete), {:controller => 'timelog', :action => 'destroy', :ids => @time_entries.collect(&:id), :back_url => @back},:method => :delete, :data => {:confirm => l(:text_time_entries_destroy_confirmation)}, :class => 'icon icon-del', :disabled => !edit_allowed %>
+<!--  </li>-->
 
 
   <% if @time_entry.present? %>

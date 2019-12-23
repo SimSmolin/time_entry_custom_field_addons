@@ -33,14 +33,21 @@ module TimeEntryPatch
       ) && !valid_period_close?(self.spent_on)
     end
 
-    def only_viewable_by?(usr)
-      #visible?(usr) &&
+    def form_only_viewable_by?(usr)
       if !valid_period_close?(self.spent_on)
-        !(usr == self.user && usr.allowed_to?(:edit_own_time_entries, project))
-        #!(usr.allowed_to?(:edit_time_entries, project)) &&
-        #usr.allowed_to?(:view_time_entries_without_edit, project)
+        !(usr == self.user && usr.allowed_to?(:edit_own_time_entries, project)) &&
+        !(usr == self.user && usr.allowed_to?(:edit_time_entries, project))
       else
         true
+      end
+    end
+
+    def list_only_viewable_by?(usr)
+      if !valid_period_close?(self.spent_on)
+        false
+        true if editable_by_with_patch?(usr) && form_only_viewable_by?(usr)
+      else
+        false
       end
     end
 

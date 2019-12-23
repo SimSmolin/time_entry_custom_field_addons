@@ -1,7 +1,7 @@
 <%= error_messages_for 'time_entry' %>
 <%= back_url_hidden_field_tag %>
 <div class="box tabular">
-<% do_disabled = @time_entry.only_viewable_by?(User.current) %>
+<% do_disabled = @time_entry.form_only_viewable_by?(User.current) %>
   <% if @time_entry.new_record? && params[:project_id] %>
     <%= hidden_field_tag 'project_id', params[:project_id] %>
   <% elsif @time_entry.new_record? && params[:issue_id] %>
