@@ -68,6 +68,7 @@ module TimeEntryPatch
             valid_period_close?(valueReadonly.customized.spent_on)) || # дата уже закрыта?
             # read_only.include?(value.custom_field_id.to_s)) # readonly по проект/роль
             !value.custom_field.editable_by?(project, user)) # readonly по проект/роль
+            #value.custom_field.editable_by_with_patch?(user)) # readonly по проект/роль
         valueReadonly
       end
     end
