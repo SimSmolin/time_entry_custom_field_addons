@@ -35,8 +35,12 @@ module TimeEntryPatch
 
     def form_only_viewable_by?(usr)
       if !valid_period_close?(self.spent_on)
-        !(usr == self.user && usr.allowed_to?(:edit_own_time_entries, project)) &&
-        !(usr == self.user && usr.allowed_to?(:edit_time_entries, project))
+        if usr.admin || usr.allowed_to?(:edit_time_entries_on_behalf_of, project)
+          false
+        else
+          !(usr == self.user && usr.allowed_to?(:edit_own_time_entries, project)) &&
+              !(usr == self.user && usr.allowed_to?(:edit_time_entries, project))
+        end
       else
         true
       end
