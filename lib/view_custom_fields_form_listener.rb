@@ -31,7 +31,7 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
           field.value=field.custom_field.default_value
         end
         field.value=field.value.gsub("{:user}", User.current.to_s)
-        field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours])).gsub(".",",")
+        field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
         field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") {:time_now}")
       end
     end
@@ -44,11 +44,25 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     date_close = DateTime.now.beginning_of_month - val_setting_months.month
     date_for_field < date_close
   end
+end
 
-
+class ViewCustomFieldsListener < Redmine::Hook::Listener
   # если пришло поле с ID пользователя в параметрах, то подменяет атрибут user
   def controller_timelog_edit_before_save(context = {})
     # log.puts context[:time_entry].user.to_s + " = " + (User.find_by(:id => context[:params][:time_entry][:user_id])).to_s
+    context[:time_entry].editable_custom_field_values.each do |field|
+      if field.customized.editable_by_with_patch?(User.current)
+        #User.current.roles_for_project(context[:project]).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }.present?
+        # если пустое то снова подставляем значение по умолчанию
+        if (field.value.nil? || field.value.delete(" ").empty?)
+          field.value=field.custom_field.default_value
+        end
+        field.value=field.value.gsub("{:user}", User.current.to_s)
+        field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
+        field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") {:time_now}")
+      end
+    end
+
     if context[:time_entry].user != User.find_by(:id => context[:params][:time_entry][:user_id]) &&
         context[:params][:time_entry][:user_id].present?
       context[:time_entry].user= User.find_by(:id => context[:params][:time_entry][:user_id])

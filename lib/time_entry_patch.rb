@@ -10,6 +10,7 @@ module TimeEntryPatch
       alias_method :visible_custom_field_values, :visible_custom_field_values_with_patch  # method "visible_custom_field_values" was modify
       alias_method :editable_by?, :editable_by_with_patch?  # method "editable_by?" was modify
 
+      validate :validate_time_entry_period_close
     end
   end
   # custom_field_values-editable_custom_field_values_with_patch
@@ -66,9 +67,9 @@ module TimeEntryPatch
         # но если период закрыт то поля делаем нередактрируемыми по дате и признаку что поле участвует в закрытии периода
         valueReadonly.readonly = ((valueReadonly.custom_field.participant_period_close? && # участвует в закрытии периода
             valid_period_close?(valueReadonly.customized.spent_on)) || # дата уже закрыта?
-            # read_only.include?(value.custom_field_id.to_s)) # readonly по проект/роль
-            !value.custom_field.editable_by?(project, user)) # readonly по проект/роль
-            #value.custom_field.editable_by_with_patch?(user)) # readonly по проект/роль
+            !value.custom_field.editable_by?(project, user) ||    # readonly по проект/роль
+            valueReadonly.custom_field.always_close?
+        )
         valueReadonly
       end
     end
@@ -167,6 +168,13 @@ module TimeEntryPatch
       self.custom_field_values = time_entry.custom_field_values.inject({}) {|h,v| h[v.custom_field_id] = v.value; h}
       # @copied_from = time_entry
       self
+    end
+
+    def validate_time_entry_period_close
+      if valid_period_close?(spent_on)
+        write_attribute(:spent_on, Date.current)
+        errors.add :spent_on, :invalid, :message => l(:error_spent_on_period_close)
+      end
     end
 
   end

@@ -10,7 +10,7 @@ module CustomFieldPatch
 
       # added sim
       #
-      safe_attributes 'participant_period_close'
+      safe_attributes 'participant_period_close', 'always_close'
 
       scope :visible_with_project_id, lambda {|*args|
         user = User.current
@@ -94,6 +94,10 @@ module CustomFieldPatch
 
   def participant_period_close?
     participant_period_close == '1'
+  end
+
+  def always_close?
+    always_close == '1'
   end
 
 end
