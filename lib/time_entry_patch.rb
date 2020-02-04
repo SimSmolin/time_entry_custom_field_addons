@@ -78,7 +78,7 @@ module TimeEntryPatch
       end
     end
 
-    def valid_period_close?(date_for_field)
+    def valid_period_close?(date_for_field) #TODO повторяет функцию в listner
       close_day = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i || 0
       if User.current.roles_for_project(project).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }.present?
         close_day = Setting.plugin_time_entry_custom_field_addons['advantage_period_close_date'].to_i || 0

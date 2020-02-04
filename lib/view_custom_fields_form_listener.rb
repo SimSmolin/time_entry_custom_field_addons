@@ -24,6 +24,7 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # можно попробовать прямо в поля писать новые значения - вроде даже сохраняет
     # добавлено sim заполнение поля атрибутом
     #
+    @project_context = context[:project]
     context[:time_entry].editable_custom_field_values.each do |field|
       if !valid_period_close?(field.customized.spent_on)
         # если пустое то снова подставляем значение по умолчанию
@@ -37,12 +38,23 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     end
   end
 
-  def valid_period_close?(date_for_field)
+  def valid_period_close?(date_for_field) # TODO эта функция повторяется в time_enrty_patch
+    close_day = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i || 0
+    if @project_context && User.current
+                               .roles_for_project(@project_context).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }
+                               .present?
+      close_day = Setting.plugin_time_entry_custom_field_addons['advantage_period_close_date'].to_i || 0
+    end
     date_for_field = date_for_field || DateTime.parse('1970-01-01')
-    shift = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i > DateTime.now.day ? 1:0
-    val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + shift
+    currently_closed = close_day > DateTime.now.day ? 1:0
+    val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + currently_closed
     date_close = DateTime.now.beginning_of_month - val_setting_months.month
     date_for_field < date_close
+    # date_for_field = date_for_field || DateTime.parse('1970-01-01')
+    # shift = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i > DateTime.now.day ? 1:0
+    # val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + shift
+    # date_close = DateTime.now.beginning_of_month - val_setting_months.month
+    # date_for_field < date_close
   end
 end
 
