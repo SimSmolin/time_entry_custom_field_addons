@@ -20,11 +20,12 @@ module CustomFieldsHelperPatch
         if custom_value.value.delete(" ").empty?
           custom_value.value=custom_value.custom_field.default_value
         end
-        custom_value.value = custom_value.to_s.split(" ", 2)[0].gsub("{:user}", "{:user} " + User.current.to_s)
+        custom_value.value = custom_value.to_s.split(" ", 2)[0]
+                                 .gsub("{:user}", "{:user} " + User.current.to_s) if field.value.to_s.include?("{:user}")
         if @time_entry.present?
           custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours).gsub(".",","))
         end
-        custom_value.value = custom_value.to_s.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") {:time_now}")
+        custom_value.value = custom_value.to_s.gsub("{:time_now}", "{:time_now}" + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") ")
       end
       #
       tag = custom_field_tag(name, custom_value)
