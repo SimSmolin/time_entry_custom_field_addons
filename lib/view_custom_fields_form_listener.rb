@@ -31,9 +31,9 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
         if (field.value.nil? || field.value.delete(" ").empty?)
           field.value=field.custom_field.default_value
         end
-        field.value=field.value.gsub("{:user}", User.current.to_s)
+        field.value=field.value.split(" ", 2)[0].gsub("{:user}", "{:user} " + User.current.to_s) # только последнее имя пользователя
         field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
-        field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") {:time_now}")
+        field.value=field.value.gsub("{:time_now}","{:time_now}, " + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ")")
       end
     end
   end
@@ -69,9 +69,9 @@ class ViewCustomFieldsListener < Redmine::Hook::Listener
         if (field.value.nil? || field.value.delete(" ").empty?)
           field.value=field.custom_field.default_value
         end
-        field.value=field.value.gsub("{:user}", User.current.to_s)
+        field.value=field.value.split(" ", 2)[0].gsub("{:user}", "{:user} " + User.current.to_s)
         field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
-        field.value=field.value.gsub("{:time_now}", Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") {:time_now}")
+        field.value=field.value.gsub("{:time_now}","{:time_now}, " + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ")")
       end
     end
 

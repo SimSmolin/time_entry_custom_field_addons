@@ -20,7 +20,7 @@ module CustomFieldsHelperPatch
         if custom_value.value.delete(" ").empty?
           custom_value.value=custom_value.custom_field.default_value
         end
-        custom_value.value = custom_value.to_s.gsub("{:user}", User.current.to_s)
+        custom_value.value = custom_value.to_s.split(" ", 2)[0].gsub("{:user}", "{:user} " + User.current.to_s)
         if @time_entry.present?
           custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours).gsub(".",","))
         end
