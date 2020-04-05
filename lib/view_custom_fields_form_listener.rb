@@ -24,17 +24,26 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # можно попробовать прямо в поля писать новые значения - вроде даже сохраняет
     # добавлено sim заполнение поля атрибутом
     #
-    @project_context = context[:project]
+    @project_context = context[:project] # нужно для проверки закрытия периода
     context[:time_entry].editable_custom_field_values.each do |field|
       if !valid_period_close?(field.customized.spent_on)
         # если пустое то снова подставляем значение по умолчанию
-        if (field.value.nil? || field.value.delete(" ").empty?)
-          field.value=field.custom_field.default_value
+        if field.custom_field.default_value.to_s.include? "{:user}"
+          field.value=User.current.to_s
         end
-        field.value=field.value.split(" ", 2)[0]
-                        .gsub("{:user}", "{:user} " + User.current.to_s) if field.value.to_s.include?("{:user}")  # только последнее имя пользователя
-        field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
-        field.value=field.value.gsub("{:time_now}","{:time_now}" + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") ")
+        if field.custom_field.default_value.to_s.include? "{:estimated_time}"
+          field.value=format_hours(context[:time_entry][:hours]).gsub(".",",")
+        end
+        if field.custom_field.default_value.to_s.include? "{:time_now}"
+          field.value=Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") " + field.value.gsub("{:time_now}","")
+        end
+        # if (field.value.nil? || field.value.delete(" ").empty?)
+        #   field.value=field.custom_field.default_value
+        # end
+        # field.value=field.value.split(" ", 2)[0]
+        #                 .gsub("{:user}", "{:user} " + User.current.to_s) if field.value.to_s.include?("{:user}")  # только последнее имя пользователя
+        # field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
+        # field.value=field.value.gsub("{:time_now}","{:time_now}" + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") ")
       end
     end
   end
@@ -65,15 +74,24 @@ class ViewCustomFieldsListener < Redmine::Hook::Listener
     # log.puts context[:time_entry].user.to_s + " = " + (User.find_by(:id => context[:params][:time_entry][:user_id])).to_s
     context[:time_entry].editable_custom_field_values.each do |field|
       if field.customized.editable_by_with_patch?(User.current)
-        #User.current.roles_for_project(context[:project]).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }.present?
-        # если пустое то снова подставляем значение по умолчанию
-        if (field.value.nil? || field.value.delete(" ").empty?)
-          field.value=field.custom_field.default_value
+        if field.custom_field.default_value.to_s.include? "{:user}"
+          field.value=User.current.to_s
         end
-        field.value=field.value.split(" ", 2)[0]
-                        .gsub("{:user}", "{:user} " + User.current.to_s) if field.value.to_s.include?("{:user}")
-        field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
-        field.value=field.value.gsub("{:time_now}","{:time_now}" + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") ")
+        if field.custom_field.default_value.to_s.include? "{:estimated_time}"
+          field.value=format_hours(context[:time_entry][:hours]).gsub(".",",")
+        end
+        if field.custom_field.default_value.to_s.include? "{:time_now}"
+          field.value=Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") " + field.value.gsub("{:time_now}","")
+        end
+
+        # если пустое то снова подставляем значение по умолчанию
+        # if (field.value.nil? || field.value.delete(" ").empty?)
+        #   field.value=field.custom_field.default_value
+        # end
+        # field.value=field.value.split(" ", 2)[0]
+        #                 .gsub("{:user}", "{:user} " + User.current.to_s) if field.value.to_s.include?("{:user}")
+        # field.value=field.value.gsub("{:estimated_time}", format_hours(context[:time_entry][:hours]).gsub(".",","))
+        # field.value=field.value.gsub("{:time_now}","{:time_now}" + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") ")
       end
     end
 
