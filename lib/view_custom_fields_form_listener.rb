@@ -24,7 +24,7 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     # можно попробовать прямо в поля писать новые значения - вроде даже сохраняет
     # добавлено sim заполнение поля атрибутом
     #
-    @project_context = context[:project] # нужно для проверки закрытия периода
+    @project_context = context[:time_entry].issue.project # нужно для проверки закрытия периода
     context[:time_entry].editable_custom_field_values.each do |field|
       if !valid_period_close?(field.customized.spent_on)
         # если пустое то снова подставляем значение по умолчанию
