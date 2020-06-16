@@ -1,16 +1,18 @@
 <%= error_messages_for 'time_entry' %>
 <%= back_url_hidden_field_tag %>
 <div class="box tabular">
-<% do_disabled = @time_entry.form_only_viewable_by?(User.current) %>
+  <% do_disabled = @time_entry.form_only_viewable_by?(User.current) && !@time_entry.new_record? %>
   <% if @time_entry.new_record? && params[:project_id] %>
     <%= hidden_field_tag 'project_id', params[:project_id] %>
   <% elsif @time_entry.new_record? && params[:issue_id] %>
     <%= hidden_field_tag 'issue_id', params[:issue_id] %>
   <% else%>
     <% if do_disabled %>
-      <p><%= f.select :project_id, project_tree_options_for_select([@time_entry.project], :selected => @time_entry.project), {:required => true}, :disabled => do_disabled %></p>
+      <p><%= f.select :project_id, project_tree_options_for_select(Project.allowed_to(:log_time).to_a, :selected => @time_entry.project, :include_blank => true),
+                      {:required => true}, :disabled => do_disabled %></p>
     <% else %>
-      <p><%= f.select :project_id, project_tree_options_for_select(Project.allowed_to(:log_time).to_a, :selected => @time_entry.project, :include_blank => true), :required => true %></p>
+      <p><%= f.select :project_id, project_tree_options_for_select(Project.allowed_to(:log_time).to_a, :selected => @time_entry.project, :include_blank => true),
+                      {:required => true} %></p>
     <% end %>
   <% end %>
 
