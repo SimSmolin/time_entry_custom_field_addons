@@ -77,8 +77,18 @@ class ViewCustomFieldsListener < Redmine::Hook::Listener
         if field.custom_field.default_value.to_s.include? "{:user}"
           field.value=User.current.to_s
         end
-        if (field.custom_field.default_value.to_s.include? "{:estimated_time}") && field.value.empty?
-          field.value=format_hours(context[:time_entry][:hours]).gsub(".",",")
+        if (field.custom_field.default_value.to_s.include? "{:estimated_time}")
+          if field.value.empty?
+            field.value=format_hours(context[:time_entry][:hours]).gsub(".",",")
+          else
+            fv= field.value.gsub(",",".");
+            if fv == "#{fv.to_f}" || fv == "#{fv.to_i}"
+              fv = "#{sprintf "%.2f",fv.to_f}"
+              field.value=fv.gsub(".",",")
+            else
+              field.value=format_hours(context[:time_entry][:hours]).gsub(".",",")
+            end
+          end
         end
         if field.custom_field.default_value.to_s.include? "{:time_now}"
           field.value=Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") " + field.value.gsub("{:time_now}","")
