@@ -82,12 +82,8 @@ class ViewCustomFieldsListener < Redmine::Hook::Listener
             field.value=format_hours(context[:time_entry][:hours]).gsub(".",",")
           else
             fv= field.value.gsub(",",".");
-            if fv == "#{fv.to_f}" || fv == "#{fv.to_i}"
-              fv = "#{sprintf "%.2f",fv.to_f}"
-              field.value=fv.gsub(".",",")
-            else
-              field.value=format_hours(context[:time_entry][:hours]).gsub(".",",")
-            end
+            fv= "#{sprintf "%.2f",fv[/[0-9.]+/].to_f}"
+            field.value=fv.gsub(".",",")
           end
         end
         if field.custom_field.default_value.to_s.include? "{:time_now}"
