@@ -12,18 +12,39 @@
     <% if User.current.allowed_to?(:log_time, @project) %>
         <fieldset class="tabular"><legend><%= l(:button_log_time) %></legend>
         <%= labelled_fields_for :time_entry, @time_entry do |time_entry| %>
-        <div class="splitcontent">
-        <div class="splitcontentleft">
-        <p><%= time_entry.hours_field :hours, :size => 6, :label => :label_spent_time %> <%= l(:field_hours) %></p>
-        </div>
-        <div class="splitcontentright">
-        <p><%= time_entry.select :activity_id, activity_collection_for_select_options %></p>
-        </div>
-        </div>
-        <p><%= time_entry.text_field :comments, :size => 60 %></p>
-        <% @time_entry.editable_custom_field_values_readonly_parse.each do |value| %>
-          <p><%= custom_field_tag_with_label_disabled  :time_entry, value %></p>
-        <% end %>
+            <div class="splitcontent">
+            <div class="splitcontentleft">
+            <p><%= time_entry.hours_field :hours, :size => 6, :label => :label_spent_time %> <%= l(:field_hours) %></p>
+            </div>
+            <div class="splitcontentright">
+            <p><%= time_entry.select :activity_id, activity_collection_for_select_options %></p>
+            </div>
+            </div>
+            <p><%= time_entry.text_field :comments, :size => 60 %></p>
+              <% @time_entry.editable_custom_field_values_readonly_parse.each do |value| %>
+            <p><%= custom_field_tag_with_label_disabled  :time_entry, value %></p>
+            <% end %>
+            <% if is_perm_bulk_insert_te_when_creating_issue %>
+              <p>
+                <label for="time_entry_hr_bulk_timeentry"><%= l(:label_issue_hr_bulk_timeentry) %></label>
+                <%=
+                  assigned_to_user = @issue.assigned_to&.name
+                  start_date = @issue.start_date&.strftime("%d.%m.%Y")
+                  due_date = @issue.due_date&.strftime("%d.%m.%Y")
+                  is_disabled = !(assigned_to_user && !assigned_to_user.empty? && start_date && due_date)
+                  check_box_tag 'time_entry[hr_bulk_timeentry]', 1 , false, {:id => "time_entry_hr_bulk_timeentry", :disabled => is_disabled}
+                  # check_box_tag 'time_entry[hr_bulk_timeentry]', 1 , false, {:id => "time_entry_hr_bulk_timeentry"}
+                %>
+                <%= "#{sprintf(l(:accept_timeentry_to_period), assigned_to_user, start_date, due_date)}" %>
+              </p>
+              <p>
+                <label for="time_entry_hr_ones_timeentry"><%= l(:label_issue_hr_ones_timeentry) %></label>
+                <%=
+                  check_box_tag 'time_entry[hr_ones_timeentry]', 1 , false, {:id => "time_entry_hr_bulk_timeentry"}
+                %>
+                <%= "#{l(:accept_timeentry_ones)}" %>
+              </p>
+            <% end %>
         <% end %>
     </fieldset>
     <% end %>
@@ -68,6 +89,7 @@
     <%= f.hidden_field :lock_version %>
     <%= hidden_field_tag 'last_journal_id', params[:last_journal_id] || @issue.last_journal_id %>
     <%= submit_tag l(:button_submit) %>
+    <%= preview_link preview_edit_issue_path(:project_id => @project, :id => @issue), 'issue-form' %>
     | <%= link_to l(:button_cancel), issue_path(id: @issue.id), :onclick => params[:action] == 'show' ? "$('#update').hide(); return false;" : '' %>
 
     <%= hidden_field_tag 'prev_issue_id', @prev_issue_id if @prev_issue_id %>

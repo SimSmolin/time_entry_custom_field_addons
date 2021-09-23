@@ -14,6 +14,7 @@ ru:
   permission_edit_time_entries_on_behalf_of: Редактирование учёта времени от имени другого пользователя
   permission_view_time_entries_without_edit: Просмотр формы учета трудозатрат без права редактирования базовых полей
   permission_edit_time_entries_advantage_time: Дополнительное время для изменения полей закрытых периодов
+  permission_bulk_insert_timeenrty_when_creating_issue: Включить массовое проведение трудозатрат (для отпусков)
   time_entry_period_close_advantage_start: Для пользователя с полномочием "Дополительное время для изменения полей закрытых периодов" зарытие периода производить
   time_entry_period_close_advantage_end: числа.
   time_entry_period_close_date: Закрытие периода производить
@@ -22,3 +23,7 @@ ru:
   label_participant_period_close: Участвует в закрытии периода
   label_always_close: Всегда закрыто (только автоматическое заполнение)
   error_spent_on_period_close: '- период списания трудозатрат закрыт'
+  label_issue_hr_bulk_timeentry: Провести за период(Отпуск)
+  label_issue_hr_ones_timeentry: Провести лично мне
+  accept_timeentry_to_period: провести для %s за период с %s по %s (не более 40 записей)
+  accept_timeentry_ones: провести как обычную трудозатрату текущему пользователю

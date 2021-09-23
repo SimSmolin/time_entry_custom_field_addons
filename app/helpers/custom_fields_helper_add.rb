@@ -1,16 +1,7 @@
 require_dependency 'custom_fields_helper'
 
-module CustomFieldsHelperPatch
-  def self.included(base) # :nodoc:
-    base.send(:include, InstanceMethods)
+module CustomFieldsHelperAdd
 
-    base.class_eval do
-      unloadable
-      alias_method :custom_field_tag_with_label, :custom_field_tag_with_label_with_patch # method "custom_field_tag_with_label" was modify
-    end
-  end
-
-  module InstanceMethods
     # Return custom field tag with its label tag
     def custom_field_tag_with_label_with_patch(name, custom_value, options={})
       # добавлено sim заполнение поля атрибутом
@@ -21,7 +12,7 @@ module CustomFieldsHelperPatch
           custom_value.value=custom_value.custom_field.default_value
         end
         custom_value.value = custom_value.to_s.split(" ", 2)[0]
-                                 .gsub("{:user}", "{:user} " + User.current.to_s) if field.value.to_s.include?("{:user}")
+                                 .gsub("{:user}", "{:user} " + User.current.to_s) if field&.value.to_s.include?("{:user}")
         if @time_entry.present?
           custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours).gsub(".",","))
         end
@@ -66,5 +57,4 @@ module CustomFieldsHelperPatch
       :disabled => "disabled"
     end
 
-  end
 end
