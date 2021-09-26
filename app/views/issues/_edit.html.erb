@@ -33,16 +33,23 @@
                   due_date = @issue.due_date&.strftime("%d.%m.%Y")
                   is_disabled = !(assigned_to_user && !assigned_to_user.empty? && start_date && due_date)
                   check_box_tag 'time_entry[hr_bulk_timeentry]', 1 , false, {:id => "time_entry_hr_bulk_timeentry", :disabled => is_disabled}
-                  # check_box_tag 'time_entry[hr_bulk_timeentry]', 1 , false, {:id => "time_entry_hr_bulk_timeentry"}
                 %>
-                <%= "#{sprintf(l(:accept_timeentry_to_period), assigned_to_user, start_date, due_date)}" %>
+                <%=
+                  content_tag 'label', "#{sprintf(l(:accept_timeentry_to_period), assigned_to_user, start_date, due_date)}".html_safe,
+                              :id => "l_time_entry_hr_bulk_timeentry",
+                              :class => "inline"
+                %>
               </p>
               <p>
-                <label for="time_entry_hr_ones_timeentry"><%= l(:label_issue_hr_ones_timeentry) %></label>
+                <label for="time_entry_hr_once_timeentry"><%= l(:label_issue_hr_ones_timeentry) %></label>
                 <%=
                   check_box_tag 'time_entry[hr_once_timeentry]', 1 , false, {:id => "time_entry_hr_once_timeentry"}
                 %>
-                <%= "#{l(:accept_timeentry_ones)}" %>
+                <%=
+                  content_tag 'label', "#{l(:accept_timeentry_ones)}".html_safe,
+                              :id => "l_time_entry_hr_bulk_timeentry",
+                              :class => "inline"
+                %>
               </p>
             <% end %>
         <% end %>
@@ -96,6 +103,58 @@
     <%= hidden_field_tag 'next_issue_id', @next_issue_id if @next_issue_id %>
     <%= hidden_field_tag 'issue_position', @issue_position if @issue_position %>
     <%= hidden_field_tag 'issue_count', @issue_count if @issue_count %>
+<% end %>
+
+<%= javascript_tag do %>
+  var format_string = "провести для {name} за период с {start_date} по {due_date} (не более 40 записей)";
+  /**
+  * работа с форматированной строкой
+  */
+  String.prototype.format = function (args) {
+    var newStr = this;
+    for (var key in args) { newStr = newStr.replace('{' + key + '}', args[key]); }
+    return newStr;
+  };
+  /**
+  * форматирование даты ISO -> DD.MM.YYYY
+  */
+  function getFormattedDate(date) {
+    var year = date.getFullYear();
+    var month = (1 + date.getMonth()).toString();
+    month = month.length > 1 ? month : '0' + month;
+    var day = date.getDate().toString();
+    day = day.length > 1 ? day : '0' + day;
+    return day + '.' + month + '.' + year;
+  };
+  /**
+  * Проверка правильности установки дат и поля Назначено
+  * после этого коррекция подписи чекбокса и сброс при ошибочном заполнении
+  */
+  function checkAssignedAndDate() {
+    let start_date = document.getElementById('issue_start_date').value;
+    let due_date = document.getElementById('issue_due_date').value;
+    let checkbox_string = format_string.format({
+        name: $('#issue_assigned_to_id').find("option:selected").text(),
+        start_date: getFormattedDate(new Date(start_date)),
+        due_date: getFormattedDate(new Date(due_date))
+    });
+    if (Number.parseInt($('#issue_assigned_to_id').val()) > 0 && !(start_date == "") && !(due_date == "")) {
+        $('#time_entry_hr_bulk_timeentry').removeAttr('disabled');
+    } else {
+        $('#time_entry_hr_bulk_timeentry').removeAttr('checked');
+        $('#time_entry_hr_bulk_timeentry').prop('disabled','disabled');
+        checkbox_string = "";
+    };
+    $('#l_time_entry_hr_bulk_timeentry').text(checkbox_string);
+  };
+
+  $('#issue-form input[type="checkbox"]').change(function() {
+    if ("time_entry_hr_bulk_timeentry" == this.id) $('#time_entry_hr_once_timeentry').removeAttr('checked');
+    if ("time_entry_hr_once_timeentry" == this.id) $('#time_entry_hr_bulk_timeentry').removeAttr('checked');
+  });
+  $('#issue_assigned_to_id').change(function() {checkAssignedAndDate()});
+  $('#issue_start_date').change(function() {checkAssignedAndDate()});
+  $('#issue_due_date').change(function() {checkAssignedAndDate()});
 <% end %>
 
 <div id="preview" class="wiki"></div>
