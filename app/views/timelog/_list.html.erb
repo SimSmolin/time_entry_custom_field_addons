@@ -15,11 +15,18 @@
   </tr>
 </thead>
 <tbody>
-<% grouped_query_results(entries, @query) do |entry, group_name, group_count, group_totals| -%>
+<%
+  cbId =""
+  grouped_query_results(entries, @query) do |entry, group_name, group_count, group_totals| -%>
   <% if group_name %>
     <% reset_cycle %>
     <tr class="group open">
       <td colspan="<%= @query.inline_columns.size + 2 %>">
+        <% time_entry=@query.group_by_column.value(entry)
+           cbId = time_entry.class.name+(time_entry.methods.include?(:id)? time_entry.id.to_s : time_entry.to_s)  %>
+        <span class="group-check" class="checkbox hide-when-print">
+          <%= check_box_tag("group_name[#{cbId}]", 1, false,
+                            {:id => nil, :onChange => "toggleGroupSelection(this, '#{cbId}')", :class => 'group-selection' }) %></span>
         <span class="expander" onclick="toggleRowGroup(this);">&nbsp;</span>
         <span class="name"><%= group_name %></span>
         <% if group_count %>
@@ -32,7 +39,7 @@
     </tr>
   <% end %>
   <tr id="time-entry-<%= entry.id %>" class="time-entry <%= cycle("odd", "even") %> hascontextmenu">
-    <td class="checkbox hide-when-print"><%= check_box_tag("ids[]", entry.id, false, :id => nil) %></td>
+    <td class="checkbox hide-when-print"><%= check_box_tag("ids[]", entry.id, false, :id => cbId) %></td>
     <% @query.inline_columns.each do |column| %>
     <%= content_tag('td', column_content(column, entry), :class => column.css_classes) %>
     <% end %>
@@ -74,3 +81,93 @@
 <% end -%>
 
 <%= context_menu %>
+<%= javascript_tag do %>
+  /**
+  * переопределение функций из файда context_menu.js
+  */
+function contextMenuClick(event) {
+  var target = $(event.target);
+  var lastSelected;
+
+  if (target.is('a') && target.hasClass('submenu')) {
+    event.preventDefault();
+    return;
+  }
+  contextMenuHide();
+  if (target.is('a') || target.is('img')) { return; }
+  if (event.which == 1 || (navigator.appVersion.match(/\bMSIE\b/))) {
+    var tr = target.closest('.hascontextmenu').first();
+    if (tr.length > 0) {
+      // a row was clicked, check if the click was on checkbox
+      if (target.is('input')) {
+        // a checkbox may be clicked
+        if (target.prop('checked')) {
+          tr.addClass('context-menu-selection');
+        } else {
+          tr.removeClass('context-menu-selection');
+          $('input[name=group_name\\['+target.prop('id')+'\\]]').prop('checked', false);
+          $('input[type=checkbox].toggle-selection').prop('checked', false);
+        }
+      } else {
+        if (event.ctrlKey || event.metaKey) {
+          contextMenuToggleSelection(tr);
+        } else if (event.shiftKey) {
+          lastSelected = contextMenuLastSelected();
+          if (lastSelected.length) {
+            var toggling = false;
+            $('.hascontextmenu').each(function(){
+              if (toggling || $(this).is(tr)) {
+                contextMenuAddSelection($(this));
+              }
+              if ($(this).is(tr) || $(this).is(lastSelected)) {
+                toggling = !toggling;
+              }
+            });
+          } else {
+            contextMenuAddSelection(tr);
+          }
+        } else {
+          contextMenuUnselectAll();
+          contextMenuAddSelection(tr);
+        }
+        contextMenuSetLastSelected(tr);
+      }
+    } else {
+      // click is outside the rows
+      if (target.is('a') && (target.hasClass('disabled') || target.hasClass('submenu'))) {
+        event.preventDefault();
+      } else if (target.is('.group-selection') || target.is('.toggle-selection') || target.is('.ui-dialog *') || $('#ajax-modal').is(':visible')) {
+        // nop
+      } else {
+        contextMenuUnselectAll();
+      }
+    }
+  }
+}
+
+function contextMenuUnselectAll() {
+  $('input[type=checkbox].toggle-selection').prop('checked', false);
+  $('input[type=checkbox].group-selection').prop('checked', false);
+  $('.hascontextmenu').each(function(){
+    contextMenuRemoveSelection($(this));
+  });
+  $('.cm-last').removeClass('cm-last');
+}
+
+function toggleIssuesSelection(el) {
+  var checked = $(this).prop('checked');
+  $('input[type=checkbox].group-selection').prop('checked', checked);
+  var boxes = $(this).parents('table').find('input[name=ids\\[\\]]');
+  boxes.prop('checked', checked).parents('.hascontextmenu').toggleClass('context-menu-selection', checked);
+}
+
+function toggleGroupSelection(element, id) {
+  let checked = $(element).prop('checked');
+  $(element).parents('table')
+      .find('input[id=' + id + ']')
+      .prop('checked', checked)
+      .parents('.hascontextmenu')
+      .toggleClass('context-menu-selection', checked);
+}
+
+<% end %>
