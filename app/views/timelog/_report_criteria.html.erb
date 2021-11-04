@@ -11,7 +11,9 @@
 <% next if hours_for_value.empty? -%>
 <tr class="<%= criterias.length > level+1 ? 'subtotal' : 'last-level' %>">
 <%= ("<td></td>" * level).html_safe %>
-<td class="name"><%= format_criteria_value(@report.available_criteria[criterias[level]], value) %></td>
+<td class="name"><%= @report.available_criteria[criterias[level]][:klass].to_s === "Issue"?
+                      format_object(Issue.find(value)) :
+                      format_object(format_criteria_value(@report.available_criteria[criterias[level]], value)) %></td>
 <%= ("<td></td>" * (criterias.length - level - 1)).html_safe -%>
   <% total = 0 -%>
   <% @report.periods.each do |period| -%>
