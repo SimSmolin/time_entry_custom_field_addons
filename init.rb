@@ -1,5 +1,7 @@
 require 'redmine'
 require 'i18n'
+require 'role'
+
 #
 # require_relative 'helpers/custom_fields_helper_add'
 # require_relative 'helpers/issues_helper_add'
@@ -15,6 +17,7 @@ require_relative 'lib/timelog_controller_patch'
 require_relative 'lib/issues_controller_patch'
 require_relative 'lib/redmine/field_format_patch'
 require_relative 'lib/redmine/helpers_timereport_patch'
+require_relative 'lib/role_patch'
 
 # ActionDispatch::Callbacks.to_prepare do                for Rails 5.0 -- deprecated TODO sim need testing
 # ActiveSupport::Reloader.to_prepare do                  for Rails 5.1
@@ -32,6 +35,8 @@ reloader.to_prepare do
   TimelogController.send :include, TimelogControllerPatch
   Redmine::FieldFormat::Base.send :include, RedmineFieldFormatPath
   QueryCustomFieldColumn.send :include, QueryCustomFieldColumnPatch
+  Role.send :include, RolePatch
+  Issue.send :include, IssuePatch
 #  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
 end
 
@@ -39,7 +44,7 @@ Redmine::Plugin.register :time_entry_custom_field_addons do
   name 'Time Entry Custom Field Addons plugin'
   author 'Sergey Melnikov'
   description 'This is a plugin for Redmine. Allow control the scope visibility timelog Custom field.'
-  version '0.0.44'
+  version '0.0.45'
   url 'https://github.com/SimSmolin/time_entry_custom_field_addons.git'
   author_url 'https://github.com/SimSmolin'
 
