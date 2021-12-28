@@ -4,5 +4,9 @@
   <p><%= f.check_box :participant_period_close, {:label => :label_participant_period_close} %></p>
   <p><%= f.check_box :always_close, {:label => :label_always_close} %></p>
   <p><%= f.text_field :custom_action, :size => 50, :label => :label_custom_action %></p>
+  <p>
+    <em class="info">Поле может принимать следующие значения:</em>
+    <em class="info">$spent_time - подставить в поле значение из Трудозатраты час(а,ов)</em>
+  </p>
 <% end %>
 <p><%= f.text_field :url_pattern, :size => 50, :label => :label_link_values_to %></p>
