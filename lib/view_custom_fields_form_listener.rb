@@ -27,7 +27,19 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     @project_context = context[:time_entry].issue.project # нужно для проверки закрытия периода
     context[:time_entry].editable_custom_field_values.each do |field|
       if !valid_period_close?(field.customized.spent_on)
-        # если пустое то снова подставляем значение по умолчанию
+        # новый вариант заполнения
+        if field.custom_field.custom_action.present?
+          if field.custom_field.custom_action.include? "$user"
+            field.value=User.current.to_s
+          end
+          if field.custom_field.custom_action.include? "$spent_time"
+            field.value=format_hours(context[:time_entry][:hours])
+          end
+          if field.custom_field.custom_action.include? "$time_now"
+            field.value=Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") " + field.value
+          end
+        end
+        # старое заполнение полей - потом нужно удалить
         if field.custom_field.default_value.to_s.include? "{:user}"
           field.value=User.current.to_s
         end
@@ -74,6 +86,20 @@ class ViewCustomFieldsListener < Redmine::Hook::Listener
     # log.puts context[:time_entry].user.to_s + " = " + (User.find_by(:id => context[:params][:time_entry][:user_id])).to_s
     context[:time_entry].editable_custom_field_values.each do |field|
       if field.customized.editable_by_with_patch?(User.current)
+        if field.custom_field.custom_action.present?
+          if field.custom_field.custom_action.include? "$user"
+            field.value=User.current.to_s
+          end
+          if (field.custom_field.custom_action.include? "$spent_time")
+            if field.value.empty?
+              field.value=format_hours(context[:time_entry][:hours])
+            end
+          end
+          if field.custom_field.custom_action.include? "$time_now"
+            field.value=Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") " + field.value
+          end
+        end
+        # далее ьлок которвый подлежит удалению
         if field.custom_field.default_value.to_s.include? "{:user}"
           field.value=User.current.to_s
         end
@@ -89,6 +115,7 @@ class ViewCustomFieldsListener < Redmine::Hook::Listener
         if field.custom_field.default_value.to_s.include? "{:time_now}"
           field.value=Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") " + field.value.gsub("{:time_now}","")
         end
+        # конец
 
         # если пустое то снова подставляем значение по умолчанию
         # if (field.value.nil? || field.value.delete(" ").empty?)

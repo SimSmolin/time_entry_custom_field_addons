@@ -37,14 +37,15 @@ reloader.to_prepare do
   QueryCustomFieldColumn.send :include, QueryCustomFieldColumnPatch
   Role.send :include, RolePatch
   Issue.send :include, IssuePatch
-#  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
+  IssueQuery.send :include, IssueQueryPatch
+  #  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
 end
 
 Redmine::Plugin.register :time_entry_custom_field_addons do
   name 'Time Entry Custom Field Addons plugin'
   author 'Sergey Melnikov'
   description 'This is a plugin for Redmine. Allow control the scope visibility timelog Custom field.'
-  version '0.0.45'
+  version '0.1.46'
   url 'https://github.com/SimSmolin/time_entry_custom_field_addons.git'
   author_url 'https://github.com/SimSmolin'
 

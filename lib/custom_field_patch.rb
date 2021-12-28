@@ -10,7 +10,7 @@ module CustomFieldPatch
 
       # added sim
       #
-      safe_attributes 'participant_period_close', 'always_close'
+      safe_attributes 'participant_period_close', 'always_close', 'custom_action'
 
       scope :visible_with_project_id, lambda {|*args|
         user = User.current

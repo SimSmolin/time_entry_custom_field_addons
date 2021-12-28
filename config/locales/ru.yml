@@ -28,3 +28,5 @@ ru:
   accept_timeentry_to_period: провести для %s за период с %s по %s (не более 40 записей)
   accept_timeentry_ones: провести как обычную трудозатрату текущему пользователю
   label_issues_visibility_own_and_unassigned: Задачи созданные или назначенные пользователю и неназначенные никому
+  label_remaining_time: Затратить до оценки трудозатрат
+  label_total_remaining_time: Затратить до общей оценки трудозатрат

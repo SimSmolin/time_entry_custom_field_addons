@@ -4,7 +4,7 @@ module RedmineFieldFormatPath
 
     base.class_eval do
       unloadable
-      field_attributes :participant_period_close, :always_close
+      field_attributes :participant_period_close, :always_close, :custom_action
 
     end
   end
