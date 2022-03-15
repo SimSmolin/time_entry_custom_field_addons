@@ -8,6 +8,7 @@ module TimeEntryQueryPatch
       unloadable
       alias_method :available_columns, :available_columns_with_patch # method "available_columns" was modify
       alias_method :base_scope, :base_scope_with_patch
+      alias_method :sql_for_issue_id_field, :sql_for_issue_id_field_patch
     end
   end
 
@@ -93,6 +94,26 @@ module TimeEntryQueryPatch
       filters_clauses.any? ? filters_clauses.join(' AND ') : nil
     end
 
+  end
+
+  def sql_for_issue_id_field_patch(field, operator, value)
+    case operator
+    when "="
+      "#{TimeEntry.table_name}.issue_id = #{value.first.to_i}"
+    when "!"
+      "NOT #{TimeEntry.table_name}.issue_id = #{value.first.to_i}"
+    when "~"
+      issue = Issue.where(:id => value.first.to_i).first
+      if issue && (issue_ids = issue.self_and_descendants.pluck(:id)).any?
+        "#{TimeEntry.table_name}.issue_id IN (#{issue_ids.join(',')})"
+      else
+        "1=0"
+      end
+    when "!*"
+      "#{TimeEntry.table_name}.issue_id IS NULL"
+    when "*"
+      "#{TimeEntry.table_name}.issue_id IS NOT NULL"
+    end
   end
 
 end

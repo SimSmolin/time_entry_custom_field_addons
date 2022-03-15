@@ -8,6 +8,8 @@ module QueryPatch
       unloadable
       alias_method :add_custom_fields_filters, :add_custom_fields_filters_with_patch # method "add_custom_fields_filters" was modify
     end
+
+    base.operators_by_filter_type[:tree] = ["=", "!", "~", "!*", "*"]
   end
 
   module InstanceMethods
