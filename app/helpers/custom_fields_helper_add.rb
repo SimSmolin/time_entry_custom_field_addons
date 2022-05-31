@@ -2,42 +2,8 @@ require_dependency 'custom_fields_helper'
 
 module CustomFieldsHelperAdd
 
-    # # Return custom field tag with its label tag
-    # def custom_field_tag_with_label_with_patch(name, custom_value, options={})
-    #   # добавлено sim заполнение поля атрибутом
-    #   #
-    #   if "time_entry".include?(name.to_s)
-    #     # если пустое то снова подставляем значение по умолчанию
-    #     if custom_value.value.delete(" ").empty?
-    #       custom_value.value=custom_value.custom_field.default_value
-    #     end
-    #     custom_value.value = custom_value.to_s.split(" ", 2)[0]
-    #                              .gsub("{:user}", "{:user} " + User.current.to_s) if field&.value.to_s.include?("{:user}")
-    #     if @time_entry.present?
-    #       custom_value.value = custom_value.to_s.gsub("{:estimated_time}", format_hours(@time_entry.hours).gsub(".",","))
-    #     end
-    #     custom_value.value = custom_value.to_s.gsub("{:time_now}", "{:time_now}" + Time.now.strftime("%d.%m.%Y %H:%M") + "(" +User.current.to_s+ ") ")
-    #   end
-    #   #
-    #   tag = custom_field_tag(name, custom_value)
-    #   tag_id = nil
-    #   ids = tag.scan(/ id="(.+?)"/)
-    #   if ids.size == 1
-    #     tag_id = ids.first.first
-    #   end
-    #   custom_field_label_tag(name, custom_value, options.merge(:for_tag_id => tag_id)) + tag
-    # end
-
     def custom_field_tag_with_label_disabled(name, custom_value, options={})
       # добавлено sim отображение поля недоступноо для редактирования
-      #
-      if "time_entry".include?(name.to_s)
-        custom_value.value= custom_value.to_s.gsub("{:user}", "")
-        if @time_entry.present?
-          custom_value.value= custom_value.to_s.gsub("{:estimated_time}", "")
-        end
-        custom_value.value= custom_value.to_s.gsub("{:time_now}", "")
-      end
       #
       tag = custom_value.readonly ? custom_field_tag_disabled(name, custom_value):custom_field_tag(name, custom_value)
       tag_id = nil
