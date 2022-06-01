@@ -78,16 +78,16 @@ module TimeEntryPatch
       end
     end
 
-    def valid_period_close?(date_for_field) #TODO повторяет функцию в listner
+    def valid_period_close?(date_for_field, dt_now=DateTime.now - 1.hours)
       close_day = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i || 0
       if User.current.roles_for_project(project).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }.present?
         close_day = Setting.plugin_time_entry_custom_field_addons['advantage_period_close_date'].to_i || 0
       end
       date_for_field = date_for_field || DateTime.parse('1970-01-01')
       # часы с отставанием на час - дать время занести трудозатраты москвичам
-      currently_closed = close_day > (DateTime.now - 1.hours).day ? 1:0
+      currently_closed = close_day > dt_now.day ? 1:0
       val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + currently_closed
-      date_close = DateTime.now.beginning_of_month - val_setting_months.month
+      date_close = dt_now.beginning_of_month - val_setting_months.month
       date_for_field < date_close
     end
 

@@ -11,7 +11,8 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
     #
     @project_context = context[:time_entry].issue.project # нужно для проверки закрытия периода
     context[:time_entry].editable_custom_field_values.each do |field|
-      if !valid_period_close?(field.customized.spent_on)
+      # if !valid_period_close?(field.customized.spent_on)
+      if !TimeEntry.new.valid_period_close?(field.customized.spent_on)
         # новый вариант заполнения
         if field.custom_field.custom_action.present?
           if field.custom_field.custom_action.include? "$user"
@@ -26,20 +27,6 @@ class ViewCustomFieldsFormListener < Redmine::Hook::ViewListener
         end
       end
     end
-  end
-
-  def valid_period_close?(date_for_field) # TODO эта функция повторяется в time_enrty_patch
-    close_day = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i || 0
-    if @project_context && User.current
-                               .roles_for_project(@project_context).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }
-                               .present?
-      close_day = Setting.plugin_time_entry_custom_field_addons['advantage_period_close_date'].to_i || 0
-    end
-    date_for_field = date_for_field || DateTime.parse('1970-01-01')
-    currently_closed = close_day > DateTime.now.day ? 1:0
-    val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + currently_closed
-    date_close = DateTime.now.beginning_of_month - val_setting_months.month
-    date_for_field < date_close
   end
 end
 
