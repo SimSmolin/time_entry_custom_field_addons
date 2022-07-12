@@ -31,3 +31,4 @@ ru:
   label_remaining_time: Затратить до оценки трудозатрат
   label_total_remaining_time: Затратить до общей оценки трудозатрат
   label_custom_action: Пользовательское действие
+  label_timelog_alert: Напоминание о необходимости отметки трудозатрат

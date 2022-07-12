@@ -3,8 +3,9 @@ require 'i18n'
 require 'role'
 
 #
-# require_relative 'helpers/custom_fields_helper_add'
-# require_relative 'helpers/issues_helper_add'
+require_relative 'app/helpers/custom_fields_helper_add'
+require_relative 'app/helpers/issues_helper_add'
+require_relative 'app/helpers/timelog_alert_helper'
 
 require_relative 'lib/time_entry_patch'
 require_relative 'lib/time_entry_custom_field_patch'
@@ -37,15 +38,18 @@ reloader.to_prepare do
   Issue.send :include, IssuePatch
   IssueQuery.send :include, IssueQueryPatch
   #  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
+  ApplicationHelper.send(:include, TimelogAlertHelper)
 end
 
 Redmine::Plugin.register :time_entry_custom_field_addons do
   name 'Time Entry Custom Field Addons plugin'
   author 'Sergey Melnikov'
   description 'This is a plugin for Redmine. Allow control the scope visibility timelog Custom field.'
-  version '0.2.2'
+  version '0.2.3'
   url 'https://github.com/SimSmolin/time_entry_custom_field_addons.git'
   author_url 'https://github.com/SimSmolin'
+
+  # bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 
   # добавляем в блок полномочий ролей управления трудозатрат новую пермижн
   project_module :time_tracking do
@@ -58,9 +62,6 @@ Redmine::Plugin.register :time_entry_custom_field_addons do
     permission :bulk_insert_timeenrty_when_creating_issue, {}, :require => :loggedin
   end
 
-  # Rails.configuration.to_prepare do
-  #   IssuesController.send(:helper, RedmineHrBulkTimeentryHelper)
-  # end
   Rails.configuration.to_prepare do
     TimelogController.send(:helper, CustomFieldsHelperAdd)
     IssuesController.send(:helper, CustomFieldsHelperAdd)
@@ -69,4 +70,16 @@ Redmine::Plugin.register :time_entry_custom_field_addons do
 
   settings :default => {'empty' => true}, :partial => 'settings/date_set'
   #Setting.plugin_time_entry_custom_field_addons[:notification_default]
+
+  require 'dispatcher' unless Rails::VERSION::MAJOR >= 3
+  if Rails::VERSION::MAJOR >= 3
+    ActionDispatch::Callbacks.to_prepare do
+      require_dependency 'redmine_time_entry_alert/hooks'
+    end
+  else
+    Dispatcher.to_prepare :time_entry_custom_field_addons do
+      require_dependency 'redmine_time_entry_alert/hooks'
+    end
+  end
+
 end

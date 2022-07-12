@@ -1,0 +1,26 @@
+<% if send_timelog_alert? -%>
+  <div id="timelog-alert" style="display:none; height:500px;">
+    <h3 class="title"><%= l(:label_timelog_alert) %></h3>
+  </div>
+  <%= javascript_tag do %>
+  function showTimelogAlert(id, width, height, title) {
+    var el = $('#'+id).first();
+    if (el.length === 0 || el.is(':visible')) {return;}
+    if (!title) title = el.find('h3.title').text();
+    // moves existing modals behind the transparent background
+    $(".modal").zIndex(99);
+    el.dialog({
+      width: width,
+      height: height,
+      modal: true,
+      resizable: false,
+      dialogClass: 'modal',
+      title: title
+    }).on('dialogclose', function(){
+      $(".modal").zIndex(101);
+    });
+    el.find("input[type=text], input[type=submit]").first().focus();
+  }
+  showTimelogAlert('timelog-alert', 1500, 720);
+  <% end %>
+<% end %>
