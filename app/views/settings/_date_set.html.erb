@@ -1,20 +1,49 @@
-<table>
-  <tbody>
-  <tr>
-    <th>Настройки: </th>
-    <td>
-      <%= l(:time_entry_period_close_date) %>
-      <input type="text" id="period_close_date"
-             value="<%= settings['period_close_date'] %>"
-             size="3"
-             name="settings[period_close_date]" >
-      <%= l(:time_entry_period_close_date_end) %>
-      <%= text_field_tag(:months_ago, settings['months_ago'], {:size => 3, :name => "settings[months_ago]"}) %>
-      <%= l(:time_entry_period_months_ago) %> <br>
-      <%= l(:time_entry_period_close_advantage_start) %>
-      <%= text_field_tag(:months_ago, settings['advantage_period_close_date'], {:size => 3, :name => "settings[advantage_period_close_date]"}) %>
-      <%= l(:time_entry_period_close_advantage_end) %>
-    </td>
-  </tr>
-  </tbody>
-</table>
+<div class="box">
+  <table>
+    <tbody>
+    <tr>
+      <th style="width: 120px">Закрытие периода: </th>
+      <td>
+        <%= l(:time_entry_period_close_date) %>
+        <input type="text" id="period_close_date"
+               value="<%= settings['period_close_date'] %>"
+               size="3"
+               name="settings[period_close_date]" >
+        <%= l(:time_entry_period_close_date_end) %>
+        <%= text_field_tag(:months_ago, settings['months_ago'], {:size => 3, :name => "settings[months_ago]"}) %>
+        <%= l(:time_entry_period_months_ago) %> <br>
+        <%= l(:time_entry_period_close_advantage_start) %>
+        <%= text_field_tag(:months_ago, settings['advantage_period_close_date'], {:size => 3, :name => "settings[advantage_period_close_date]"}) %>
+        <%= l(:time_entry_period_close_advantage_end) %>
+        <% open_period_standard = TimeEntry.new.calculate_period_dates(settings['period_close_date'], settings['months_ago']) %>
+        <% open_period_standard_str = open_period_standard[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+          open_period_standard[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+        <% open_period_advantage = TimeEntry.new.calculate_period_dates(settings['advantage_period_close_date'], settings['months_ago']) %>
+        <% open_period_advantage_str = open_period_advantage[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+          open_period_advantage[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+      </td>
+      <td>
+        <div class="box"> Период открыт (без полномочий):<h3><%= open_period_standard_str %></h3></div>
+        <div class="box"> с дополнительными полномочиями:<h3><%= open_period_advantage_str %></h3></div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="box">
+  <table>
+    <tbody>
+    <tr>
+      <th style="width: 120px">Таймаут окна: </th>
+      <td>
+        <%= "Напоминвние о несписании трудозатарт повторять через" %>
+        <input type="text" id="timeentry_alert_timeout"
+               value="<%= settings['timeentry_alert_timeout'] %>"
+               size="3"
+               name="settings[timeentry_alert_timeout]" >
+        <%= "минут" %>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

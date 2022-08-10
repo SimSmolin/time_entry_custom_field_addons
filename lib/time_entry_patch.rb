@@ -78,17 +78,26 @@ module TimeEntryPatch
       end
     end
 
-    def valid_period_close?(date_for_field, dt_now=DateTime.now - 1.hours)
-      close_day = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i || 0
-      if User.current.roles_for_project(project).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }.present?
-        close_day = Setting.plugin_time_entry_custom_field_addons['advantage_period_close_date'].to_i || 0
-      end
+    # define_method :calculate_period_dates, instance_method(:calculate_period_dates)
+  def calculate_period_dates(period_close_date, months_ago, dt_now=DateTime.now - 1.hours)
+    close_date = period_close_date.to_i || 0
+    currently_closed = close_date > DateTime.now.day ? 1:0
+    val_setting_months = months_ago.to_i + currently_closed
+    begin_period = DateTime.now.beginning_of_month - val_setting_months.month
+    {begin_period: begin_period, end_period: (dt_now.beginning_of_month + 1.month + close_date.day - 1.day)}
+  end
+
+  # dt_now часы с отставанием на час - дать время занести трудозатраты москвичам
+  def valid_period_close?(date_for_field, dt_now=DateTime.now - 1.hours)
       date_for_field = date_for_field || DateTime.parse('1970-01-01')
-      # часы с отставанием на час - дать время занести трудозатраты москвичам
-      currently_closed = close_day > dt_now.day ? 1:0
-      val_setting_months = Setting.plugin_time_entry_custom_field_addons['months_ago'].to_i + currently_closed
-      date_close = dt_now.beginning_of_month - val_setting_months.month
-      date_for_field < date_close
+      period_close_date = Setting.plugin_time_entry_custom_field_addons['period_close_date'].to_i || 0
+      if User.current.roles_for_project(project).reject { |role| !role.permissions.include?(:edit_time_entries_advantage_time) }.present?
+        period_close_date = Setting.plugin_time_entry_custom_field_addons['advantage_period_close_date'].to_i || 0
+      end
+      begin_period = calculate_period_dates(period_close_date,
+                                            Setting.plugin_time_entry_custom_field_addons['months_ago'],
+                                            dt_now)[:begin_period]
+      date_for_field < begin_period
     end
 
     def editable_custom_field_values_with_patch(user=nil)
