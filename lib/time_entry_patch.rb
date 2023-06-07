@@ -135,6 +135,9 @@ module TimeEntryPatch
 
       result = {}
       workflow_permissions = WorkflowPermission.where( :role_id => roles.map(&:id)).to_a # changed sim
+      if workflow_permissions.size() == 0
+        workflow_permissions = WorkflowPermission.where( :role_id => Role.find_by(:name => "Участник").id).to_a
+      end
       if workflow_permissions.any?
         workflow_rules = workflow_permissions.inject({}) do |h, wp|
           h[wp.field_name] ||= {}
