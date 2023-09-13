@@ -9,6 +9,8 @@ module TimeEntryQueryPatch
       alias_method :available_columns, :available_columns_with_patch # method "available_columns" was modify
       alias_method :base_scope, :base_scope_with_patch
       alias_method :sql_for_issue_id_field, :sql_for_issue_id_field_patch
+      alias_method :initialize_available_filters, :initialize_available_filters_patch
+      define_method :sql_for_role_id_field, instance_method(:sql_for_role_id_field)
     end
   end
 
@@ -114,6 +116,60 @@ module TimeEntryQueryPatch
     when "*"
       "#{TimeEntry.table_name}.issue_id IS NOT NULL"
     end
+  end
+
+  def sql_for_role_id_field(field, operator, value)
+    value = User.current.projects_by_role[Role.find(value[0].to_i)].map(&:id)
+    '(' + sql_for_field(field, operator, value, queried_table_name, "project_id", true) + ')'
+  end
+
+  def initialize_available_filters_patch
+    add_available_filter "spent_on", :type => :date_past
+
+    add_available_filter("project_id",
+                         :type => :list, :values => lambda { project_values }
+    ) if project.nil?
+
+    add_available_filter("role_id", :name => l(:field_role),
+                         :type => :list, :values => lambda { role_values }
+    ) if project.nil?
+
+    if project && !project.leaf?
+      add_available_filter "subproject_id",
+                           :type => :list_subprojects,
+                           :values => lambda { subproject_values }
+    end
+
+    add_available_filter("issue_id", :type => :tree, :label => :label_issue)
+    add_available_filter("issue.tracker_id",
+                         :type => :list,
+                         :name => l("label_attribute_of_issue", :name => l(:field_tracker)),
+                         :values => lambda { trackers.map {|t| [t.name, t.id.to_s]} })
+    add_available_filter("issue.status_id",
+                         :type => :list,
+                         :name => l("label_attribute_of_issue", :name => l(:field_status)),
+                         :values => lambda { issue_statuses_values })
+    add_available_filter("issue.fixed_version_id",
+                         :type => :list,
+                         :name => l("label_attribute_of_issue", :name => l(:field_fixed_version)),
+                         :values => lambda { fixed_version_values })
+
+    add_available_filter("user_id",
+                         :type => :list_optional, :values => lambda { author_values }
+    )
+
+    activities = (project ? project.activities : TimeEntryActivity.shared)
+    add_available_filter("activity_id",
+                         :type => :list, :values => activities.map {|a| [a.name, a.id.to_s]}
+    )
+
+    add_available_filter "comments", :type => :text
+    add_available_filter "hours", :type => :float
+
+    add_custom_fields_filters(TimeEntryCustomField)
+    add_associations_custom_fields_filters :project
+    add_custom_fields_filters(issue_custom_fields, :issue)
+    add_associations_custom_fields_filters :user
   end
 
 end

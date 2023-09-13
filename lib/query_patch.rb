@@ -7,6 +7,8 @@ module QueryPatch
     base.class_eval do
       unloadable
       alias_method :add_custom_fields_filters, :add_custom_fields_filters_with_patch # method "add_custom_fields_filters" was modify
+      define_method :role_values, instance_method(:role_values)
+      define_method :projects_by_role_values, instance_method(:projects_by_role_values)
     end
 
     base.operators_by_filter_type[:tree] = ["=", "!", "~", "!*", "*"]
@@ -35,6 +37,25 @@ module QueryPatch
         end
       end
     end
+
+    def role_values
+      project_values = []
+      project_values += projects_by_role_values
+      project_values
+    end
+
+    def projects_by_role_values
+      return @projects_by_role_values if @projects_by_role_values
+
+      values = []
+      User.current.projects_by_role.map do |role, projects|
+        values << ["#{role.name}", role.id.to_s]
+      end
+      @projects_by_role_values = values
+    end
+
+
+
   end
 end
 
