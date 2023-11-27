@@ -14,6 +14,7 @@ require_relative 'lib/custom_field_patch'
 require_relative 'lib/custom_fields_helper_patch'
 require_relative 'lib/time_entry_query_patch'
 require_relative 'lib/query_patch'
+require_relative 'lib/user_patch'
 require_relative 'lib/timelog_controller_patch'
 require_relative 'lib/issues_controller_patch'
 require_relative 'lib/redmine/field_format_patch'
@@ -37,6 +38,7 @@ reloader.to_prepare do
   Redmine::FieldFormat::Base.send :include, RedmineFieldFormatPath
   QueryCustomFieldColumn.send :include, QueryCustomFieldColumnPatch
   Role.send :include, RolePatch
+  User.send :include, UserPatch
   Issue.send :include, IssuePatch
   IssueQuery.send :include, IssueQueryPatch
   #  Redmine::Helpers::TimeReport.send :include, RedmineHelpersTimeReportPath
@@ -47,7 +49,7 @@ Redmine::Plugin.register :time_entry_custom_field_addons do
   name 'Time Entry Custom Field Addons plugin'
   author 'Sergey Melnikov'
   description 'This is a plugin for Redmine. Allow control the scope visibility timelog Custom field.'
-  version '0.2.7'
+  version '0.2.8'
   url 'https://github.com/SimSmolin/time_entry_custom_field_addons.git'
   author_url 'https://github.com/SimSmolin'
 
