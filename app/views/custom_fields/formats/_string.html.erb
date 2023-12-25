@@ -11,4 +11,8 @@
     <em class="info">$time_now - дописать в поле Текущее время и пользователя</em>
   </p>
 <% end %>
+<% if @custom_field.class.name == "UserCustomField" %>
+  <p><%= f.check_box :always_close, {:label => :label_always_close} %></p>
+<% end %>
+
 <p><%= f.text_field :url_pattern, :size => 50, :label => :label_link_values_to %></p>

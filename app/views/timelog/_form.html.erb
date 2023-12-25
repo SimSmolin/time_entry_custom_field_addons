@@ -27,7 +27,7 @@
   <p><%= f.text_field :comments, :size => 100, :disabled => do_disabled, :maxlength => 1024, :required => Setting.timelog_required_fields.include?('comments') %></p>
   <p><%= f.select :activity_id, activity_collection_for_select_options(@time_entry), {:required => true}, :disabled => do_disabled %></p>
   <% @time_entry.editable_custom_field_values_readonly_parse.each do |value| %>
-    <p><%= custom_field_tag_with_label_disabled  :time_entry, value %></p>
+    <p><%= custom_field_tag_with_label_options  :time_entry, value, :disabled => value.readonly %></p>
   <% end %>
   <% if !@project.nil? && @project.users_by_role
       .map {|k,v|  v.include?(User.current)? k:nil}

@@ -6,6 +6,7 @@ module UserPatch
 
     base.class_eval do
 
+      before_save :set_last_updater_principal
       after_save :set_users_list
     end
   end
@@ -18,6 +19,10 @@ module UserPatch
           cf.save
         end
       end
+    end
+    def set_last_updater_principal
+      cf = self.available_custom_fields.select{ |cf| cf.custom_action.to_s.include?("$user_id")}.first
+      self.custom_field_values= { cf.id => User.current.id } unless cf.nil?
     end
   end
 end
