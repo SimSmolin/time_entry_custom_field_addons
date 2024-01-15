@@ -85,7 +85,7 @@ module TimeEntryPatch
     val_setting_months = months_ago.to_i + currently_closed
     begin_period = DateTime.now.beginning_of_month - val_setting_months.month
     end_period = dt_now.beginning_of_month + 1.month + close_date.day - 1.day
-    if dt_now.day >= 15
+    if dt_now.day >= 15 + close_date
       begin_period = begin_period.next_day(15)
     else
       end_period = end_period - 15.day
