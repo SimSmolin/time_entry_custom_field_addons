@@ -15,11 +15,11 @@ ru:
   permission_view_time_entries_without_edit: Просмотр формы учета трудозатрат без права редактирования базовых полей
   permission_edit_time_entries_advantage_time: Дополнительное время для изменения полей закрытых периодов
   permission_bulk_insert_timeenrty_when_creating_issue: Включить массовое проведение трудозатрат (для отпусков)
-  time_entry_period_close_advantage_start: Для пользователя с полномочием "Дополительное время для изменения полей закрытых периодов" зарытие периода производить
-  time_entry_period_close_advantage_end: числа.
-  time_entry_period_close_date: Закрытие периода производить
-  time_entry_period_close_date_end: числа. За
-  time_entry_period_months_ago: месяцев назад. (0 - остается доступным только текущий месяц)
+  time_entry_period_close_advantage_start: Для пользователя с полномочием "Дополительное время для изменения полей закрытых периодов" зарытие периода производить спустя
+  time_entry_period_close_advantage_end: дня(ей).
+  time_entry_period_close_date: Закрытие периода производить спустя
+  time_entry_period_close_date_end: дня(ей) и
+  time_entry_period_months_ago: месяцев от окончания периода.
   label_participant_period_close: Участвует в закрытии периода
   label_always_close: Всегда закрыто (только автоматическое заполнение)
   error_spent_on_period_close: '- период списания трудозатрат закрыт'
