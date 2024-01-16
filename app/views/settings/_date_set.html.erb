@@ -3,7 +3,7 @@
     <tbody>
     <tr>
       <th style="width: 120px">Закрытие периода: </th>
-      <td>
+      <td >
         <%= l(:time_entry_period_close_date) %>
         <input type="text" id="period_close_date"
                value="<%= settings['period_close_date'] %>"
@@ -15,16 +15,79 @@
         <%= l(:time_entry_period_close_advantage_start) %>
         <%= text_field_tag(:months_ago, settings['advantage_period_close_date'], {:size => 3, :name => "settings[advantage_period_close_date]"}) %>
         <%= l(:time_entry_period_close_advantage_end) %>
-        <% open_period_standard = TimeEntry.new.calculate_period_dates(settings['period_close_date'], settings['months_ago']) %>
-        <% open_period_standard_str = open_period_standard[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
-          open_period_standard[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
-        <% open_period_advantage = TimeEntry.new.calculate_period_dates(settings['advantage_period_close_date'], settings['months_ago']) %>
-        <% open_period_advantage_str = open_period_advantage[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
-          open_period_advantage[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
       </td>
-      <td>
-        <div class="box"> Период открыт (без полномочий):<h3><%= open_period_standard_str %></h3></div>
-        <div class="box"> с дополнительными полномочиями:<h3><%= open_period_advantage_str %></h3></div>
+      <td style="width: 350px">
+        <% prev_period_start = DateTime.now.day > 15? DateTime.now.at_beginning_of_month : DateTime.now.at_beginning_of_month - 1.month + 15.day
+          curr_period_start = DateTime.now.day > 15? DateTime.now.at_beginning_of_month + 15.day : DateTime.now.at_beginning_of_month
+          next_period_start = DateTime.now.day > 15? DateTime.now.at_beginning_of_month + 1.month : DateTime.now.at_beginning_of_month + 15.day
+          prev_period_end = DateTime.now.day > 15? DateTime.now.at_beginning_of_month + 15.day - 1.day : DateTime.now.at_beginning_of_month - 1.day
+          curr_period_end = DateTime.now.day > 15? DateTime.now.at_beginning_of_month + 1.month - 1.day : DateTime.now.at_beginning_of_month + 15.day - 1.day
+          next_period_end = DateTime.now.day > 15? DateTime.now.at_beginning_of_month + 1.month + 15.day - 1.day : DateTime.now.at_beginning_of_month + 1.month - 1.day
+          prev_period_str = prev_period_start.strftime('%d.%m.%Y').to_s + " - " + prev_period_end.strftime('%d.%m.%Y').to_s
+          curr_period_str = curr_period_start.strftime('%d.%m.%Y').to_s + " - " + curr_period_end.strftime('%d.%m.%Y').to_s
+          next_period_str = next_period_start.strftime('%d.%m.%Y').to_s + " - " + next_period_end.strftime('%d.%m.%Y').to_s%>
+        <% prev_open_period_standard = TimeEntry.new.calculate_period_dates(
+          settings['period_close_date'],
+          settings['months_ago'],
+          prev_period_start)
+           prev_open_period_standard_str = prev_open_period_standard[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+             prev_open_period_standard[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+        <% prev_open_period_advantage = TimeEntry.new.calculate_period_dates(
+          settings['advantage_period_close_date'],
+          settings['months_ago'],
+          prev_period_start)
+           prev_open_period_advantage_str = prev_open_period_advantage[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+             prev_open_period_advantage[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+        <% curr_open_period_standard = TimeEntry.new.calculate_period_dates(
+          settings['period_close_date'],
+          settings['months_ago'],
+          curr_period_start)
+           curr_open_period_standard_str = curr_open_period_standard[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+             curr_open_period_standard[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+        <% curr_open_period_advantage = TimeEntry.new.calculate_period_dates(
+          settings['advantage_period_close_date'],
+          settings['months_ago'],
+          curr_period_start)
+           curr_open_period_advantage_str = curr_open_period_advantage[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+             curr_open_period_advantage[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+        <% next_open_period_standard = TimeEntry.new.calculate_period_dates(
+          settings['period_close_date'],
+          settings['months_ago'],
+          next_period_start)
+           next_open_period_standard_str = next_open_period_standard[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+             next_open_period_standard[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+        <% next_open_period_advantage = TimeEntry.new.calculate_period_dates(
+          settings['advantage_period_close_date'],
+          settings['months_ago'],
+          next_period_start)
+           next_open_period_advantage_str = next_open_period_advantage[:begin_period].strftime('%d.%m.%Y %H:%M').to_s + " - " +
+             next_open_period_advantage[:end_period].strftime('%d.%m.%Y %H:%M').to_s%>
+        <div class="box" style="text-align:center">
+          Предыдущий период <%= prev_period_str %> без полномочий доступен для редактирования:
+          <h3 style="margin-bottom:2px"><%= prev_open_period_standard_str %></h3>
+        </div>
+        <div class="box" style="text-align:center">
+          Предыдущий период <%= prev_period_str %> с дополнительными полномочиями доступен для редактирования:
+          <h3 style="margin-bottom:2px"><%= prev_open_period_advantage_str %></h3>
+        </div>
+
+        <div class="box" style="text-align:center">
+          Текущий период <%= curr_period_str %> с дополнительными полномочиями доступен для редактирования:
+          <h3 style="margin-bottom:2px"><%= curr_open_period_standard_str %></h3>
+        </div>
+        <div class="box" style="text-align:center">
+          Текущий период <%= curr_period_str %> с дополнительными полномочиями доступен для редактирования:
+          <h3 style="margin-bottom:2px"><%= curr_open_period_advantage_str %></h3>
+        </div>
+
+        <div class="box" style="text-align:center">
+          Сдедующий период <%= next_period_str %> с дополнительными полномочиями доступен для редактирования:
+          <h3 style="margin-bottom:2px"><%= next_open_period_standard_str %></h3>
+        </div>
+        <div class="box" style="text-align:center">
+          Сдедующий период <%= next_period_str %> с дополнительными полномочиями доступен для редактирования:
+          <h3 style="margin-bottom:2px"><%= next_open_period_advantage_str %></h3>
+        </div>
       </td>
     </tr>
     </tbody>
