@@ -35,3 +35,5 @@ ru:
   label_prev_last_month: позапрошлый месяц
   label_current_halfmonth: текущая половина месяца
   label_previous_halfmonth: предыдущая половина месяца
+  timelog-alert-week-hours-rate: Предупреждение - нормачас в неделю (0 отключить)
+  timelog-alert-last-alert: Последний показ предупреждения был в
