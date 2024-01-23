@@ -37,3 +37,4 @@ ru:
   label_previous_halfmonth: предыдущая половина месяца
   timelog-alert-week-hours-rate: Предупреждение - нормачас в неделю (0 отключить)
   timelog-alert-last-alert: Последний показ предупреждения был в
+  group-alert-week-hours-rate: Нормативное количество часов для участников
