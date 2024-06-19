@@ -81,7 +81,7 @@ module TimeEntryQueryPatch
           filters_clauses << send(method, field, operator, v)
         else
           # regular field
-          filters_clauses << '(' + sql_for_field(field, operator, v, queried_table_name, field, true) + ')'
+          filters_clauses << '(' + sql_for_field(field, operator, v, queried_table_name, field, false) + ')'
         end
       end if filters and valid?
 
