@@ -20,6 +20,7 @@ module TimeEntryQueryPatch
       @available_columns = self.class.available_columns.dup
       # next line changed sim
       @available_columns += [QueryAssociationColumn.new(:issue,:fixed_version, :caption => :field_fixed_version)]
+      @available_columns += [QueryAssociationColumn.new(:issue,:estimated_hours, :caption => :field_estimated_hours)]
       @available_columns += [QueryAssociationColumn.new(:user,:mail, :caption => :field_mail)]
       @available_columns += TimeEntryCustomField.visible_with_project_id(project_id).map {|cf| QueryCustomFieldColumn.new(cf)  }
       # @available_columns += TimeEntryCustomField.visible.map {|cf| QueryCustomFieldColumn.new(cf)  }
