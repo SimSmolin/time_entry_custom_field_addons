@@ -18,7 +18,7 @@ module QueryPatch
     base.operators[:llm] = :label_prev_last_month
 
     base.operators_by_filter_type[:tree] = ["=", "!", "~", "!*", "*"]
-    base.operators_by_filter_type[:date] = [ "=", ">=", "<=", "><", "<t+", ">t+", "><t+", "t+", "t", "ld", "w", "lw", "l2w", "m", "lm", "llm", "y", ">t-", "<t-", "><t-", "t-", "!*", "*" ]
+    base.operators_by_filter_type[:date] = [ "=", ">=", "<=", "><", "<t+", ">t+", "><t+", "t+", "t", "ld", "w", "lw", "l2w", "chm", "phm", "m", "lm", "llm", "y", ">t-", "<t-", "><t-", "t-", "!*", "*" ]
     base.operators_by_filter_type[:date_past] = [ "=", ">=", "<=", "><", ">t-", "<t-", "><t-", "t-", "t", "ld", "w", "lw", "l2w", "chm", "phm", "m", "lm", "llm", "y", "!*", "*" ]
 
   end

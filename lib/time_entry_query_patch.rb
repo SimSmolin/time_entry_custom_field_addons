@@ -119,6 +119,10 @@ module TimeEntryQueryPatch
     end
   end
 
+  def sql_for_issue_estimated_hours_field(field, operator, value)
+    sql_for_field("estimated_hours", operator, value, Issue.table_name, "estimated_hours")
+  end
+
   def sql_for_role_id_field(field, operator, value)
     value = User.current.projects_by_role[Role.find(value[0].to_i)].map(&:id)
     '(' + sql_for_field(field, operator, value, queried_table_name, "project_id", true) + ')'
@@ -146,6 +150,10 @@ module TimeEntryQueryPatch
                          :type => :list,
                          :name => l("label_attribute_of_issue", :name => l(:field_tracker)),
                          :values => lambda { trackers.map {|t| [t.name, t.id.to_s]} })
+    add_available_filter("issue.estimated_hours",
+                         :type => :float,
+                         :name => l("label_attribute_of_issue", :name => l(:field_estimated_hours)),
+                          :values => lambda { fixed_version_values })
     add_available_filter("issue.status_id",
                          :type => :list,
                          :name => l("label_attribute_of_issue", :name => l(:field_status)),
