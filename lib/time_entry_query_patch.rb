@@ -26,6 +26,9 @@ module TimeEntryQueryPatch
       # @available_columns += TimeEntryCustomField.visible.map {|cf| QueryCustomFieldColumn.new(cf)  }
       @available_columns += UserCustomField.visible.
           map {|cf| QueryAssociationCustomFieldColumn.new(:user, cf, :totalable => false) }
+
+      @available_columns.delete(@available_columns.bsearch {|elem| elem.name.eql? :issue})
+      @available_columns += [QueryColumn.new(:issue, :sortable => "#{Issue.table_name}.id", :groupable => true)]
       # end changed
       @available_columns += issue_custom_fields.visible.
           map {|cf| QueryAssociationCustomFieldColumn.new(:issue, cf, :totalable => false) }
